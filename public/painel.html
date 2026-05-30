@@ -6,332 +6,505 @@
 <title>Vista Parque · Painel do Síndico</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..600&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
 <style>
   :root {
-    --musgo: #2e5d3b; --folha: #3f8a52; --broto: #6fb98a; --sage: #d7e8da;
-    --orvalho: #eef6ef; --creme: #fbfaf5; --papel: #f5f3ea; --tinta: #1d2a20;
-    --musgo-suave: #5a7361; --linha: #e3e0d4;
-    --sombra: 0 10px 40px -14px rgba(46,93,59,.28);
-    --sombra-sutil: 0 2px 12px rgba(46,93,59,.07);
-    --serif: "Fraunces", Georgia, serif;
-    --sans: "Hanken Grotesk", -apple-system, system-ui, sans-serif;
+    --musgo:#264a32; --musgo2:#2e5d3b; --folha:#3f8a52; --broto:#6fb98a; --menta:#9ad3b0;
+    --sage:#cfe6d5; --orvalho:#eef6ef; --creme:#fbfaf6; --papel:#f3f1e8; --tinta:#1c2a21;
+    --suave:#5d7365; --linha:#e6e2d6; --coral:#e08a4e; --coral2:#f0b27a;
+    --vidro: rgba(255,255,255,.62); --vidro-borda: rgba(255,255,255,.7);
+    --sombra:0 18px 50px -22px rgba(38,74,50,.40); --sombra2:0 4px 18px rgba(38,74,50,.08);
+    --serif:"Fraunces",Georgia,serif; --sans:"Hanken Grotesk",-apple-system,system-ui,sans-serif;
+    --r:20px;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { max-width: 100%; overflow-x: hidden; }
-  body {
-    font-family: var(--sans); background: var(--creme); color: var(--tinta);
-    line-height: 1.55; -webkit-font-smoothing: antialiased;
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{max-width:100%;overflow-x:hidden}
+  body{font-family:var(--sans);background:var(--creme);color:var(--tinta);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .hidden{display:none!important}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:var(--sage);border-radius:8px;border:3px solid var(--creme)}
+
+  @keyframes surge{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  @keyframes fadein{from{opacity:0}to{opacity:1}}
+  @keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+  .reveal{opacity:0;animation:surge .65s cubic-bezier(.2,.75,.2,1) forwards}
+
+  /* ===================== LOGIN ===================== */
+  #login{position:fixed;inset:0;display:grid;place-items:center;padding:20px;overflow:hidden}
+  .cena{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,#bfe0c8 0%,#e9f4ec 38%,#f6f4ec 100%)}
+  .cena .sol{position:absolute;top:8%;left:50%;transform:translateX(-50%);width:260px;height:260px;border-radius:50%;
+    background:radial-gradient(circle,#fff7e0,rgba(255,247,224,0) 70%);filter:blur(4px)}
+  .cena svg{position:absolute;bottom:0;left:0;width:100%;height:auto}
+  .login-card{position:relative;z-index:2;width:100%;max-width:400px;padding:40px 30px 30px;border-radius:28px;
+    background:var(--vidro);backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%);
+    border:1px solid var(--vidro-borda);box-shadow:var(--sombra);text-align:center;animation:pop .7s cubic-bezier(.2,.75,.2,1) both}
+  .crest{width:64px;height:64px;margin:0 auto 14px;border-radius:18px;display:grid;place-items:center;font-size:30px;
+    background:linear-gradient(135deg,var(--folha),var(--musgo2));box-shadow:0 10px 22px -8px rgba(38,74,50,.6)}
+  .login-card h1{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--musgo);letter-spacing:-.5px}
+  .login-card .sub{color:var(--suave);font-size:13.5px;font-weight:500;margin-top:3px}
+  .login-card form{margin-top:24px;text-align:left}
+  .campo-wrap{position:relative;margin-bottom:12px}
+  .campo-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--suave);opacity:.7}
+  input[type=password]{width:100%;padding:14px 14px 14px 42px;border:1.5px solid rgba(255,255,255,.8);border-radius:14px;
+    font-size:16px;font-family:var(--sans);outline:none;background:rgba(255,255,255,.55);transition:border .15s,background .15s}
+  input[type=password]:focus{border-color:var(--folha);background:rgba(255,255,255,.85)}
+  .lembrar{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--suave);margin:4px 2px 0;cursor:pointer;user-select:none}
+  .lembrar input{width:17px;height:17px;accent-color:var(--folha)}
+  button.primary{width:100%;margin-top:18px;padding:15px;border:none;border-radius:14px;cursor:pointer;
+    background:linear-gradient(135deg,var(--folha),var(--musgo2));color:#fff;font-size:15.5px;font-weight:700;font-family:var(--sans);
+    letter-spacing:.3px;box-shadow:0 12px 26px -12px rgba(63,138,82,.9);transition:transform .12s,filter .15s}
+  button.primary:hover{filter:brightness(1.06)}button.primary:active{transform:scale(.99)}
+  .erro{color:#b23b2e;font-size:13px;margin-top:12px;min-height:16px;text-align:center}
+
+  /* ===================== APP / LAYOUT ===================== */
+  #app{display:grid;grid-template-columns:1fr;min-height:100svh}
+
+  /* Sidebar */
+  .side{position:fixed;z-index:40;top:0;left:0;bottom:0;width:264px;transform:translateX(-100%);
+    transition:transform .32s cubic-bezier(.3,.8,.3,1);display:flex;flex-direction:column;padding:22px 16px;
+    background:linear-gradient(180deg,var(--musgo2),var(--musgo));color:#eaf3ec}
+  .side.aberta{transform:none}
+  .side .logo{display:flex;align-items:center;gap:11px;padding:6px 8px 22px}
+  .side .logo .mark{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.14);display:grid;place-items:center;font-size:20px;border:1px solid rgba(255,255,255,.2)}
+  .side .logo b{font-family:var(--serif);font-weight:600;font-size:19px;letter-spacing:-.3px}
+  .side .navlabel{font-size:10.5px;text-transform:uppercase;letter-spacing:1.6px;opacity:.55;padding:6px 10px;font-weight:700}
+  .navitem{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border-radius:13px;border:none;cursor:pointer;
+    background:transparent;color:#dcebe0;font-family:var(--sans);font-size:14.5px;font-weight:600;text-align:left;transition:background .15s,color .15s;margin-bottom:3px}
+  .navitem svg{width:19px;height:19px;flex:none;opacity:.85}
+  .navitem:hover{background:rgba(255,255,255,.08);color:#fff}
+  .navitem.ativo{background:rgba(255,255,255,.16);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  .navitem .badge{margin-left:auto;font-size:11px;font-weight:800;background:var(--broto);color:var(--musgo);border-radius:20px;padding:1px 8px}
+  .side .conta{margin-top:auto;display:flex;align-items:center;gap:11px;padding:12px 10px;border-top:1px solid rgba(255,255,255,.12)}
+  .side .conta .av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--broto),var(--menta));display:grid;place-items:center;font-size:18px;flex:none}
+  .side .conta b{font-size:14px;display:block}.side .conta small{opacity:.6;font-size:12px}
+  .side .sair{margin-left:auto;background:none;border:none;color:#dcebe0;cursor:pointer;opacity:.7;padding:6px}
+  .side .sair:hover{opacity:1}
+
+  .overlay{position:fixed;inset:0;z-index:35;background:rgba(28,42,33,.45);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .3s}
+  .overlay.on{opacity:1;pointer-events:auto}
+
+  /* Conteúdo */
+  .conteudo{min-width:0;padding:0 16px 60px}
+  .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;padding:16px 0;background:linear-gradient(var(--creme) 70%,rgba(251,250,246,0));margin:0 -16px;padding-left:16px;padding-right:16px}
+  .hamb{width:42px;height:42px;border-radius:12px;border:1px solid var(--linha);background:#fff;display:grid;place-items:center;cursor:pointer;flex:none}
+  .hamb svg{width:20px;height:20px;color:var(--musgo)}
+  .topbar .tit{min-width:0}
+  .topbar .tit h2{font-family:var(--serif);font-weight:600;font-size:clamp(21px,6vw,28px);color:var(--musgo);letter-spacing:-.5px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topbar .tit p{font-size:12.5px;color:var(--suave)}
+  .topbar .pdf{margin-left:auto;display:flex;align-items:center;gap:8px;border:none;cursor:pointer;border-radius:12px;padding:11px 16px;
+    background:var(--musgo2);color:#fff;font-weight:700;font-size:13.5px;font-family:var(--sans);white-space:nowrap;transition:background .15s}
+  .topbar .pdf:hover{background:var(--folha)}.topbar .pdf svg{width:16px;height:16px}
+
+  .view{animation:fadein .4s ease}
+  .grid{display:grid;gap:14px}
+
+  /* Cards de estatística */
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat{position:relative;background:#fff;border:1px solid var(--linha);border-radius:var(--r);padding:18px;box-shadow:var(--sombra2);overflow:hidden}
+  .stat .ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:18px;background:var(--orvalho)}
+  .stat .num{font-family:var(--serif);font-weight:700;font-size:clamp(30px,8vw,40px);color:var(--musgo);line-height:1;margin-top:12px;letter-spacing:-1px}
+  .stat .rot{font-size:12.5px;color:var(--suave);font-weight:600;margin-top:5px}
+  .stat .spark{position:absolute;right:14px;top:16px;display:flex;align-items:flex-end;gap:3px;height:30px}
+  .stat .spark i{width:5px;background:var(--menta);border-radius:3px;display:block}
+
+  .painel{background:#fff;border:1px solid var(--linha);border-radius:var(--r);padding:22px;box-shadow:var(--sombra2)}
+  .painel h3{font-family:var(--serif);font-weight:600;font-size:17px;color:var(--musgo);margin-bottom:4px}
+  .painel .leg-sub{font-size:12.5px;color:var(--suave);margin-bottom:16px}
+
+  .canvas-wrap{position:relative}
+  .gauge-wrap{position:relative;height:200px;display:grid;place-items:center}
+  .gauge-center{position:absolute;top:54%;left:0;right:0;text-align:center;transform:translateY(-50%);pointer-events:none}
+  .gauge-center .g-num{font-family:var(--serif);font-weight:700;font-size:42px;color:var(--musgo);letter-spacing:-1px}
+  .gauge-center .g-lab{font-size:11px;color:var(--suave);font-weight:700;text-transform:uppercase;letter-spacing:1.5px}
+  .gauge-legs{display:flex;justify-content:center;gap:22px;margin-top:6px}
+  .gauge-legs .it{font-size:12.5px;color:var(--suave);display:flex;align-items:center;gap:7px}
+  .gauge-legs .d{width:10px;height:10px;border-radius:3px}
+
+  /* Promo jardim */
+  .promo{position:relative;overflow:hidden;border-radius:var(--r);padding:24px;color:#eaf3ec;
+    background:linear-gradient(135deg,var(--folha),var(--musgo));box-shadow:var(--sombra2)}
+  .promo h3{font-family:var(--serif);font-weight:600;font-size:22px;color:#fff;margin-bottom:6px;max-width:70%}
+  .promo p{font-size:13px;opacity:.85;max-width:74%}
+  .promo .folhas{position:absolute;right:-10px;bottom:-12px;font-size:96px;opacity:.22;transform:rotate(-12deg)}
+  .promo .chip{display:inline-block;margin-top:14px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);
+    padding:7px 13px;border-radius:20px;font-size:12.5px;font-weight:700}
+
+  /* Pills filtro */
+  .pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .pill{border:1px solid var(--linha);background:#fff;color:var(--suave);padding:8px 15px;border-radius:30px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans);transition:all .15s}
+  .pill.on{background:var(--musgo2);color:#fff;border-color:var(--musgo2)}
+
+  /* Conversas */
+  .conversa{padding:15px 0;border-bottom:1px dashed var(--linha)}
+  .conversa:first-child{padding-top:0}.conversa:last-child{border-bottom:none;padding-bottom:0}
+  .conversa .quem{font-size:11.5px;color:var(--suave);margin-bottom:8px;font-weight:600}
+  .balao{max-width:88%;padding:11px 15px;border-radius:16px;font-size:14px;margin-bottom:8px;white-space:pre-wrap;overflow-wrap:anywhere}
+  .balao.m{background:var(--papel);border:1px solid var(--linha);border-top-left-radius:5px}
+  .balao.b{background:linear-gradient(135deg,var(--orvalho),var(--sage));border:1px solid #c4ddca;margin-left:auto;border-top-right-radius:5px}
+  .tag{display:inline-block;font-size:9.5px;font-weight:800;padding:3px 9px;border-radius:20px;margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px}
+  .tag.pergunta{background:#e0ecff;color:#2d5fb0}.tag.reclamacao{background:#fdeccf;color:#9a6a16}
+
+  /* Linhas de lista (reclamações/infrações) */
+  .linha-item{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px dashed var(--linha)}
+  .linha-item:last-child{border-bottom:none}
+  .linha-item .av{width:40px;height:40px;border-radius:12px;background:var(--orvalho);display:grid;place-items:center;font-size:18px;flex:none}
+  .linha-item .corpo{min-width:0;flex:1}
+  .linha-item .corpo b{font-size:14px}.linha-item .corpo .txt{font-size:13.5px;color:var(--tinta);margin-top:2px;overflow-wrap:anywhere}
+  .linha-item .meta{font-size:11.5px;color:var(--suave);margin-top:4px;display:flex;gap:10px;flex-wrap:wrap}
+  .chip-assunto{background:var(--orvalho);color:var(--musgo2);font-weight:700;font-size:11px;padding:2px 9px;border-radius:20px}
+  .chip-acao{font-weight:700;font-size:11px;padding:2px 9px;border-radius:20px}
+  .chip-acao.apagado{background:#fde8e4;color:#b23b2e}.chip-acao.avisado{background:#fdeccf;color:#9a6a16}
+
+  .vazio{color:var(--suave);font-size:14px;font-style:italic;text-align:center;padding:30px 10px}
+  footer.rod{text-align:center;color:var(--suave);font-size:12px;margin-top:30px;font-family:var(--serif);font-style:italic}
+
+  /* ===================== RESPONSIVO ===================== */
+  @media (min-width:560px){ .stats{grid-template-columns:repeat(4,1fr)} }
+  @media (min-width:980px){
+    #app{grid-template-columns:264px 1fr}
+    .side{position:sticky;height:100svh;transform:none}
+    .overlay{display:none}
+    .hamb{display:none}
+    .conteudo{padding:0 30px 70px}
+    .topbar{margin:0 -30px;padding-left:30px;padding-right:30px}
+    .row-3{grid-template-columns:1.1fr 1fr 1fr}
+    .row-2{grid-template-columns:1.4fr 1fr}
   }
-  .hidden { display: none !important; }
-  @keyframes surge { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-  .reveal { opacity: 0; animation: surge .6s cubic-bezier(.2,.7,.2,1) forwards; }
 
-  /* ============ MOBILE-FIRST (base = celular) ============ */
-
-  /* LOGIN */
-  #login {
-    min-height: 100svh; display: grid; place-items: center; padding: 18px;
-    background:
-      radial-gradient(700px 320px at 80% -10%, rgba(111,185,138,.20), transparent 60%),
-      radial-gradient(600px 380px at -10% 110%, rgba(63,138,82,.12), transparent 55%);
-  }
-  .login-card {
-    position: relative; background: var(--creme); border: 1px solid var(--linha);
-    border-radius: 24px; padding: 42px 24px 30px; width: 100%; max-width: 400px;
-    box-shadow: var(--sombra); overflow: hidden; text-align: center;
-  }
-  .login-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 80px;
-    background: linear-gradient(135deg, var(--musgo), var(--folha)); }
-  .crest { position: relative; width: 66px; height: 66px; margin: 0 auto 14px; border-radius: 19px;
-    background: var(--creme); display: grid; place-items: center; font-size: 32px;
-    box-shadow: 0 8px 20px rgba(46,93,59,.25); border: 1px solid var(--linha); }
-  .login-card h1 { font-family: var(--serif); font-weight: 600; font-size: 28px; color: var(--musgo); letter-spacing: -.5px; }
-  .login-card .sub { color: var(--musgo-suave); font-size: 13px; font-weight: 500; margin-top: 2px; }
-  .login-card form { margin-top: 24px; text-align: left; }
-  label.campo { font-size: 11.5px; font-weight: 700; color: var(--musgo-suave); text-transform: uppercase; letter-spacing: 1px; }
-  input[type=password] {
-    width: 100%; margin-top: 8px; padding: 14px 16px; border: 1.5px solid var(--linha);
-    border-radius: 14px; font-size: 16px; font-family: var(--sans); outline: none; background: var(--papel);
-    transition: border .15s, background .15s; }
-  input[type=password]:focus { border-color: var(--broto); background: var(--creme); }
-  button.primary {
-    width: 100%; margin-top: 16px; padding: 15px; border: none; border-radius: 14px;
-    background: var(--musgo); color: #fff; font-size: 15px; font-weight: 700; font-family: var(--sans);
-    cursor: pointer; transition: transform .12s, background .15s; }
-  button.primary:active { transform: scale(.99); }
-  button.primary:hover { background: var(--folha); }
-  .erro { color: #b23b2e; font-size: 13px; margin-top: 12px; min-height: 16px; text-align: center; }
-
-  /* HEADER */
-  header.topo {
-    position: relative; color: var(--creme); padding: 20px 0 40px; overflow: hidden;
-    background: linear-gradient(155deg, var(--musgo) 0%, var(--folha) 100%);
-  }
-  header.topo::after { content: ""; position: absolute; inset: 0;
-    background: radial-gradient(500px 240px at 95% -30%, rgba(255,255,255,.16), transparent 60%); }
-  .topo-inner { position: relative; z-index: 2; width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 18px;
-    display: flex; flex-direction: column; gap: 16px; }
-  .marca { display: flex; align-items: center; gap: 13px; min-width: 0; }
-  .crest-sm { width: 46px; height: 46px; border-radius: 14px; background: rgba(255,255,255,.15);
-    border: 1px solid rgba(255,255,255,.28); display: grid; place-items: center; font-size: 24px; flex: none; }
-  .marca h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(22px, 6.5vw, 26px); line-height: 1.05; letter-spacing: -.4px; }
-  .marca span { display: block; font-size: 12px; opacity: .85; font-weight: 500; }
-  .acoes { display: flex; gap: 10px; }
-  .btn { flex: 1; border: 1px solid rgba(255,255,255,.32); background: rgba(255,255,255,.14); color: #fff;
-    padding: 11px 14px; border-radius: 12px; font-size: 13.5px; font-weight: 600; font-family: var(--sans);
-    cursor: pointer; text-align: center; transition: background .15s; }
-  .btn:hover { background: rgba(255,255,255,.24); }
-
-  /* MAIN sobe levemente sobre o header */
-  main { width: 100%; max-width: 1080px; margin: -22px auto 0; padding: 0 16px 56px; position: relative; z-index: 3; }
-  .secao-titulo { font-family: var(--serif); font-style: italic; font-weight: 500;
-    font-size: clamp(17px, 5vw, 20px); color: var(--musgo); margin: 30px 2px 14px; display: flex; align-items: center; gap: 10px; }
-  .secao-titulo::after { content: ""; flex: 1; height: 1px; background: var(--linha); }
-  main > .secao-titulo:first-child { margin-top: 0; }
-
-  /* CARDS (base: 1 coluna) */
-  .cards { display: grid; grid-template-columns: 1fr; gap: 14px; }
-  .card { background: var(--creme); border: 1px solid var(--linha); border-radius: 18px; padding: 18px 20px;
-    box-shadow: var(--sombra-sutil); position: relative; overflow: hidden; }
-  .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
-    background: linear-gradient(var(--broto), var(--folha)); }
-  .card .emoji { font-size: 19px; }
-  .card .num { font-family: var(--serif); font-weight: 700; font-size: clamp(34px, 10vw, 44px); color: var(--musgo);
-    line-height: 1; margin-top: 6px; letter-spacing: -1px; }
-  .card .rotulo { color: var(--musgo-suave); font-size: 13px; font-weight: 600; margin-top: 5px; }
-
-  /* RESOLUÇÃO (base: empilhado) */
-  .painel-resolucao { display: grid; grid-template-columns: 1fr; gap: 22px; justify-items: center; text-align: left;
-    background: var(--creme); border: 1px solid var(--linha); border-radius: 20px; padding: 24px 20px; box-shadow: var(--sombra-sutil); }
-  .anel { width: 176px; height: 176px; border-radius: 50%; display: grid; place-items: center;
-    transition: background 1s cubic-bezier(.2,.7,.2,1); flex: none; }
-  .anel .miolo { width: 128px; height: 128px; background: var(--creme); border-radius: 50%; display: grid; place-items: center; text-align: center;
-    box-shadow: 0 6px 16px -8px rgba(46,93,59,.4); }
-  .anel .pct { font-family: var(--serif); font-weight: 700; font-size: 40px; color: var(--musgo); letter-spacing: -1px; }
-  .anel .leg { font-size: 10.5px; color: var(--musgo-suave); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; }
-  .legenda { display: flex; flex-direction: column; gap: 14px; width: 100%; }
-  .legenda .item { display: flex; align-items: flex-start; gap: 11px; font-size: 14px; }
-  .dot { width: 12px; height: 12px; border-radius: 5px; margin-top: 4px; flex: none; }
-  .legenda b { font-family: var(--serif); font-weight: 600; }
-  .legenda small { color: var(--musgo-suave); }
-
-  /* LISTAS / BARRAS (base: 1 coluna) */
-  .grid-2 { display: grid; grid-template-columns: 1fr; gap: 14px; }
-  .painel-lista { background: var(--creme); border: 1px solid var(--linha); border-radius: 20px; padding: 20px; box-shadow: var(--sombra-sutil); }
-  .painel-lista h3 { font-family: var(--serif); font-weight: 600; font-size: 16px; color: var(--musgo); margin-bottom: 16px; }
-  .barra-item { margin-bottom: 14px; }
-  .barra-item:last-child { margin-bottom: 0; }
-  .barra-item .topo-b { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; margin-bottom: 6px; }
-  .barra-item .topo-b span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-  .barra-item .qt { color: var(--musgo); font-family: var(--serif); font-weight: 700; flex: none; }
-  .barra-trilho { height: 9px; background: var(--orvalho); border-radius: 6px; overflow: hidden; }
-  .barra-fill { height: 100%; background: linear-gradient(90deg, var(--broto), var(--folha)); border-radius: 6px;
-    width: 0; transition: width 1s cubic-bezier(.2,.7,.2,1); }
-  .vazio { color: var(--musgo-suave); font-size: 13.5px; font-style: italic; }
-
-  /* CONVERSAS */
-  .conversas { background: var(--creme); border: 1px solid var(--linha); border-radius: 20px; padding: 18px; box-shadow: var(--sombra-sutil); }
-  .conversa { padding: 14px 0; border-bottom: 1px dashed var(--linha); }
-  .conversa:first-child { padding-top: 0; }
-  .conversa:last-child { border-bottom: none; padding-bottom: 0; }
-  .conversa .quem { font-size: 11.5px; color: var(--musgo-suave); margin-bottom: 8px; font-weight: 600; }
-  .balao { max-width: 90%; padding: 11px 14px; border-radius: 16px; font-size: 14px; margin-bottom: 8px;
-    white-space: pre-wrap; overflow-wrap: anywhere; }
-  .balao.morador { background: var(--papel); border: 1px solid var(--linha); border-top-left-radius: 5px; }
-  .balao.bot { background: linear-gradient(135deg, var(--orvalho), var(--sage)); border: 1px solid #c8ddcb;
-    margin-left: auto; border-top-right-radius: 5px; }
-  .tag { display: inline-block; font-size: 9.5px; font-weight: 800; padding: 3px 9px; border-radius: 20px;
-    margin-bottom: 7px; text-transform: uppercase; letter-spacing: .5px; }
-  .tag.pergunta { background: #e0ecff; color: #2d5fb0; }
-  .tag.reclamacao { background: #fdeccf; color: #9a6a16; }
-
-  footer.rodape { text-align: center; color: var(--musgo-suave); font-size: 12.5px; margin-top: 36px;
-    font-family: var(--serif); font-style: italic; padding: 0 10px; }
-  footer .leaf { font-style: normal; }
-
-  /* ============ TABLET (>= 600px) ============ */
-  @media (min-width: 600px) {
-    .topo-inner { flex-direction: row; align-items: center; justify-content: space-between; padding: 0 24px; }
-    .acoes { flex: none; }
-    .btn { flex: none; }
-    main { padding: 0 24px 64px; margin-top: -28px; }
-    header.topo { padding: 24px 0 48px; }
-    .cards { grid-template-columns: repeat(2, 1fr); gap: 16px; }
-    .grid-2 { grid-template-columns: 1fr 1fr; gap: 18px; }
-    .crest-sm { width: 50px; height: 50px; font-size: 26px; }
-  }
-
-  /* ============ DESKTOP (>= 900px) ============ */
-  @media (min-width: 900px) {
-    .cards { grid-template-columns: repeat(4, 1fr); }
-    .painel-resolucao { grid-template-columns: 200px 1fr; gap: 34px; align-items: center; padding: 30px; }
-    .anel { margin: 0 auto; }
-  }
-
-  /* ============ PDF ============ */
-  @media print {
-    .btn, .acoes { display: none !important; }
-    body { background: #fff; }
-    header.topo { color: var(--musgo); background: #fff; border-bottom: 2px solid var(--folha); padding-bottom: 16px; }
-    header.topo::after { display: none; }
-    .crest-sm { background: var(--orvalho); border-color: var(--linha); }
-    main { margin-top: 14px; }
-    .cards { grid-template-columns: repeat(4, 1fr); }
-    .grid-2 { grid-template-columns: 1fr 1fr; }
-    .card, .painel-resolucao, .painel-lista, .conversas { box-shadow: none; break-inside: avoid; }
-    .reveal { opacity: 1 !important; animation: none !important; }
+  @media print{
+    .side,.overlay,.hamb,.pdf,.pills{display:none!important}
+    #app{grid-template-columns:1fr}
+    body{background:#fff}.painel,.stat{box-shadow:none;break-inside:avoid}
+    .topbar{position:static}
   }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ===================== LOGIN ===================== -->
 <section id="login">
-  <div class="login-card reveal">
+  <div class="cena">
+    <div class="sol"></div>
+    <svg viewBox="0 0 1440 320" preserveAspectRatio="none" style="height:42%;opacity:.6">
+      <path fill="#a6d3b4" d="M0,224 C240,140 480,300 720,240 C960,180 1200,260 1440,200 L1440,320 L0,320 Z"/>
+    </svg>
+    <svg viewBox="0 0 1440 320" preserveAspectRatio="none" style="height:32%">
+      <path fill="#6fb98a" d="M0,256 C300,200 560,320 820,272 C1080,224 1260,300 1440,256 L1440,320 L0,320 Z"/>
+    </svg>
+    <svg viewBox="0 0 1440 240" preserveAspectRatio="none" style="height:20%">
+      <path fill="#3f8a52" d="M0,200 C280,150 620,240 900,200 C1180,160 1320,210 1440,190 L1440,240 L0,240 Z"/>
+    </svg>
+  </div>
+  <div class="login-card">
     <div class="crest">🌿</div>
     <h1>Vista Parque</h1>
     <div class="sub">Painel do Síndico · Assistente Virtual</div>
     <form id="form-login">
-      <label class="campo" for="senha">Senha de acesso</label>
-      <input type="password" id="senha" autocomplete="current-password" placeholder="••••••••" />
+      <div class="campo-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <input type="password" id="senha" autocomplete="current-password" placeholder="Senha de acesso" />
+      </div>
+      <label class="lembrar"><input type="checkbox" id="lembrar" checked> Manter conectado</label>
       <button class="primary" type="submit">Entrar no painel</button>
       <div class="erro" id="erro-login"></div>
     </form>
   </div>
 </section>
 
-<!-- APP -->
+<!-- ===================== APP ===================== -->
 <div id="app" class="hidden">
-  <header class="topo">
-    <div class="topo-inner">
-      <div class="marca">
-        <div class="crest-sm">🌿</div>
-        <div>
-          <h1>Vista Parque</h1>
-          <span>Assistente Virtual · visão do síndico</span>
+  <aside class="side" id="side">
+    <div class="logo"><div class="mark">🌿</div><b>Vista Parque</b></div>
+    <div class="navlabel">Navegação</div>
+    <button class="navitem ativo" data-view="geral">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+      Visão geral</button>
+    <button class="navitem" data-view="conversas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Conversas <span class="badge" id="bdg-conv"></span></button>
+    <button class="navitem" data-view="reclamacoes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+      Reclamações <span class="badge" id="bdg-recl"></span></button>
+    <button class="navitem" data-view="infracoes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Infrações <span class="badge" id="bdg-infr"></span></button>
+    <div class="conta">
+      <div class="av">👤</div>
+      <div><b>Síndico</b><small>Vista Parque</small></div>
+      <button class="sair" id="sair" title="Sair">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      </button>
+    </div>
+  </aside>
+  <div class="overlay" id="overlay"></div>
+
+  <div class="conteudo">
+    <div class="topbar">
+      <button class="hamb" id="hamb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+      <div class="tit"><h2 id="view-tit">Visão geral</h2><p id="view-sub"></p></div>
+      <button class="pdf" onclick="window.print()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Exportar PDF</button>
+    </div>
+
+    <!-- VISÃO GERAL -->
+    <section class="view" id="v-geral">
+      <div class="grid stats" id="stats" style="margin-bottom:14px"></div>
+      <div class="grid row-2" style="margin-bottom:14px">
+        <div class="painel reveal">
+          <h3>Resolução pela IA</h3>
+          <div class="leg-sub">Quanto o assistente resolve sozinho vs. encaminha ao síndico</div>
+          <div class="gauge-wrap"><canvas id="c-gauge"></canvas>
+            <div class="gauge-center"><div class="g-num" id="gauge-num">–</div><div class="g-lab">resolvido</div></div>
+          </div>
+          <div class="gauge-legs">
+            <div class="it"><span class="d" style="background:var(--folha)"></span><span id="lg-resp">0 respondidas</span></div>
+            <div class="it"><span class="d" style="background:var(--sage)"></span><span id="lg-esc">0 encaminhadas</span></div>
+          </div>
+        </div>
+        <div class="promo reveal">
+          <span class="folhas">🌿</span>
+          <h3>Comunidade Vista Parque</h3>
+          <p>O assistente atende os moradores 24h, direto no grupo do WhatsApp.</p>
+          <span class="chip" id="promo-chip">— interações registradas</span>
         </div>
       </div>
-      <div class="acoes">
-        <button class="btn" onclick="window.print()">Exportar PDF</button>
-        <button class="btn" id="sair">Sair</button>
+      <div class="painel reveal" style="margin-bottom:14px">
+        <h3>Atividade dos últimos 14 dias</h3>
+        <div class="leg-sub">Perguntas e reclamações por dia</div>
+        <div class="canvas-wrap" style="height:240px"><canvas id="c-atividade"></canvas></div>
       </div>
-    </div>
-  </header>
-
-  <main>
-    <div class="secao-titulo reveal">Visão geral</div>
-    <div class="cards" id="cards"></div>
-
-    <div class="secao-titulo reveal">Resolução pela IA</div>
-    <div class="painel-resolucao reveal">
-      <div class="anel" id="anel">
-        <div class="miolo"><div><div class="pct" id="anel-pct">–</div><div class="leg">resolvido</div></div></div>
+      <div class="grid row-2">
+        <div class="painel reveal">
+          <h3>Dúvidas mais frequentes</h3>
+          <div class="leg-sub">O que os moradores mais perguntam</div>
+          <div class="canvas-wrap" style="height:230px"><canvas id="c-duvidas"></canvas></div>
+          <div id="duvidas-vazio"></div>
+        </div>
+        <div class="painel reveal">
+          <h3>Reclamações por assunto</h3>
+          <div class="leg-sub">Distribuição dos temas</div>
+          <div class="canvas-wrap" style="height:230px"><canvas id="c-reclam"></canvas></div>
+          <div id="reclam-vazio"></div>
+        </div>
       </div>
-      <div class="legenda" id="legenda"></div>
-    </div>
+    </section>
 
-    <div class="secao-titulo reveal">Dúvidas e reclamações</div>
-    <div class="grid-2">
-      <div class="painel-lista reveal"><h3>Dúvidas mais frequentes</h3><div id="top-duvidas"></div></div>
-      <div class="painel-lista reveal"><h3>Reclamações por assunto</h3><div id="recl-assunto"></div></div>
-    </div>
+    <!-- CONVERSAS -->
+    <section class="view hidden" id="v-conversas">
+      <div class="pills" id="pills-conv">
+        <button class="pill on" data-f="todas">Todas</button>
+        <button class="pill" data-f="pergunta">Perguntas</button>
+        <button class="pill" data-f="reclamacao">Reclamações</button>
+      </div>
+      <div class="painel"><div id="lista-conversas"></div></div>
+    </section>
 
-    <div class="secao-titulo reveal">Conversas recentes</div>
-    <div class="conversas reveal" id="conversas"></div>
+    <!-- RECLAMAÇÕES -->
+    <section class="view hidden" id="v-reclamacoes">
+      <div class="painel"><div id="lista-reclamacoes"></div></div>
+    </section>
 
-    <footer class="rodape">
-      <span class="leaf">🌿</span> Assistente Virtual do Condomínio Vista Parque · <span id="data-rodape"></span>
-    </footer>
-  </main>
+    <!-- INFRAÇÕES -->
+    <section class="view hidden" id="v-infracoes">
+      <div class="painel"><div id="lista-infracoes"></div></div>
+    </section>
+
+    <footer class="rod">🌿 Assistente Virtual do Condomínio Vista Parque · <span id="data-rod"></span></footer>
+  </div>
 </div>
 
 <script>
 const $ = (s) => document.querySelector(s);
-const api = (path) => fetch(path, { headers: { Authorization: 'Bearer ' + (localStorage.getItem('vp_token') || '') } });
+const $$ = (s) => document.querySelectorAll(s);
+const tok = () => localStorage.getItem('vp_token') || sessionStorage.getItem('vp_token') || '';
+const api = (p) => fetch(p, { headers: { Authorization: 'Bearer ' + tok() } });
+const esc = (s) => String(s ?? '').replace(/[&<>]/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;' }[c]));
+const fmtData = (d) => new Date(d).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+const palVerde = ['#3f8a52','#6fb98a','#9ad3b0','#264a32','#cfe6d5','#2e5d3b'];
+let charts = {};
+let dados = {};
 
-function revelar() {
-  document.querySelectorAll('#app .reveal').forEach((el, i) => { el.style.animationDelay = Math.min(i * 60, 500) + 'ms'; });
-}
-
+/* ---------- LOGIN ---------- */
 $('#form-login').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  $('#erro-login').textContent = '';
+  e.preventDefault(); $('#erro-login').textContent = '';
   try {
-    const r = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ senha: $('#senha').value }) });
-    if (!r.ok) { $('#erro-login').textContent = r.status === 401 ? 'Senha incorreta.' : 'Painel ainda não configurado.'; return; }
+    const r = await fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ senha: $('#senha').value }) });
+    if (!r.ok) { $('#erro-login').textContent = r.status === 401 ? 'Senha incorreta.' : 'Painel não configurado.'; return; }
     const { token } = await r.json();
-    localStorage.setItem('vp_token', token);
+    (($('#lembrar').checked) ? localStorage : sessionStorage).setItem('vp_token', token);
     entrar();
   } catch { $('#erro-login').textContent = 'Falha de conexão.'; }
 });
+$('#sair').addEventListener('click', () => { localStorage.removeItem('vp_token'); sessionStorage.removeItem('vp_token'); location.reload(); });
 
-$('#sair').addEventListener('click', () => { localStorage.removeItem('vp_token'); location.reload(); });
+/* ---------- Navegação ---------- */
+const titulos = {
+  geral: ['Visão geral', 'Resumo do que o assistente fez'],
+  conversas: ['Conversas', 'Histórico de interações no grupo'],
+  reclamacoes: ['Reclamações', 'Registradas pelo assistente'],
+  infracoes: ['Infrações', 'Mensagens moderadas'],
+};
+function irPara(v) {
+  $$('.navitem').forEach((b) => b.classList.toggle('ativo', b.dataset.view === v));
+  $$('.view').forEach((s) => s.classList.add('hidden'));
+  $('#v-' + v).classList.remove('hidden');
+  $('#view-tit').textContent = titulos[v][0];
+  $('#view-sub').textContent = titulos[v][1];
+  fecharMenu();
+}
+$$('.navitem').forEach((b) => b.addEventListener('click', () => irPara(b.dataset.view)));
 
+/* Drawer mobile */
+const abrirMenu = () => { $('#side').classList.add('aberta'); $('#overlay').classList.add('on'); };
+const fecharMenu = () => { $('#side').classList.remove('aberta'); $('#overlay').classList.remove('on'); };
+$('#hamb').addEventListener('click', abrirMenu);
+$('#overlay').addEventListener('click', fecharMenu);
+
+/* ---------- Entrar ---------- */
 async function entrar() {
   const r = await api('/api/metricas');
-  if (!r.ok) { localStorage.removeItem('vp_token'); return; }
+  if (!r.ok) { localStorage.removeItem('vp_token'); sessionStorage.removeItem('vp_token'); return; }
   $('#login').classList.add('hidden');
   $('#app').classList.remove('hidden');
-  $('#data-rodape').textContent = new Date().toLocaleString('pt-BR');
-  render(await r.json());
-  carregarConversas();
+  $('#data-rod').textContent = new Date().toLocaleString('pt-BR');
+  dados.metricas = await r.json();
+  const [serie, conv, recl, infr] = await Promise.all([
+    api('/api/serie').then((x) => x.json()).catch(() => []),
+    api('/api/conversas').then((x) => x.json()).catch(() => []),
+    api('/api/reclamacoes').then((x) => x.json()).catch(() => []),
+    api('/api/infracoes').then((x) => x.json()).catch(() => []),
+  ]);
+  dados = { ...dados, serie, conv, recl, infr };
+  renderTudo();
 }
 
-function card(emoji, num, rotulo) {
-  return `<div class="card reveal"><div class="emoji">${emoji}</div><div class="num">${num}</div><div class="rotulo">${rotulo}</div></div>`;
+function countUp(el, alvo, suf = '') {
+  const dur = 900, t0 = performance.now();
+  (function tick(t) {
+    const k = Math.min((t - t0) / dur, 1), e = 1 - Math.pow(1 - k, 3);
+    el.textContent = Math.round(alvo * e) + suf;
+    if (k < 1) requestAnimationFrame(tick);
+  })(t0);
 }
 
-function render(m) {
-  const p = m.perguntas || { total: 0, respondidas: 0, escaladas: 0 };
-  const inf = m.infracoes || { total: 0, apagadas: 0 };
+function renderTudo() {
+  const m = dados.metricas;
+  const p = m.perguntas || { total:0, respondidas:0, escaladas:0 };
+  const inf = m.infracoes || { total:0, apagadas:0 };
   const totalReclam = (m.reclamacoes_por_assunto || []).reduce((s, r) => s + Number(r.n), 0);
   const pct = p.total ? Math.round((p.respondidas / p.total) * 100) : 0;
 
-  $('#cards').innerHTML =
-    card('💬', p.total, 'Perguntas recebidas') +
-    card('🌱', pct + '%', 'Resolvidas pela IA') +
-    card('📣', totalReclam, 'Reclamações') +
-    card('🛡️', inf.total, 'Infrações sinalizadas');
-  revelar();
+  // Badges
+  $('#bdg-conv').textContent = dados.conv.length || '';
+  $('#bdg-recl').textContent = dados.recl.length || '';
+  $('#bdg-infr').textContent = dados.infr.length || '';
 
-  const ang = pct * 3.6;
-  requestAnimationFrame(() => { $('#anel').style.background = `conic-gradient(var(--folha) 0 ${ang}deg, var(--orvalho) ${ang}deg 360deg)`; });
-  $('#anel-pct').textContent = pct + '%';
-  $('#legenda').innerHTML =
-    `<div class="item"><span class="dot" style="background:var(--folha)"></span><div><b>${p.respondidas}</b> respondidas pela IA<br><small>direto no grupo, citando o regimento</small></div></div>` +
-    `<div class="item"><span class="dot" style="background:var(--sage)"></span><div><b>${p.escaladas}</b> encaminhadas ao síndico<br><small>quando a dúvida não consta no regimento</small></div></div>`;
+  // Stat cards
+  const sparks = () => '<div class="spark">' + Array.from({length:7}, () => `<i style="height:${20+Math.random()*70}%"></i>`).join('') + '</div>';
+  $('#stats').innerHTML = [
+    { ic:'💬', n:p.total, r:'Perguntas recebidas' },
+    { ic:'🌱', n:pct, r:'Resolvidas pela IA', suf:'%' },
+    { ic:'📣', n:totalReclam, r:'Reclamações' },
+    { ic:'🛡️', n:inf.total, r:'Infrações' },
+  ].map((c, i) => `<div class="stat reveal" style="animation-delay:${i*70}ms">${sparks()}<div class="ic">${c.ic}</div>`
+    + `<div class="num" data-n="${c.n}" data-suf="${c.suf||''}">0${c.suf||''}</div><div class="rot">${c.r}</div></div>`).join('');
+  $$('#stats .num').forEach((el) => countUp(el, +el.dataset.n, el.dataset.suf));
 
-  barras('#top-duvidas', (m.top_duvidas || []).map((d) => ({ rotulo: d.texto, n: Number(d.n) })), 'Nenhuma dúvida registrada ainda.');
-  barras('#recl-assunto', (m.reclamacoes_por_assunto || []).map((d) => ({ rotulo: d.assunto, n: Number(d.n) })), 'Nenhuma reclamação registrada ainda.');
+  // Gauge
+  $('#gauge-num').textContent = pct + '%';
+  $('#lg-resp').textContent = p.respondidas + ' respondidas';
+  $('#lg-esc').textContent = p.escaladas + ' encaminhadas';
+  charts.gauge?.destroy();
+  charts.gauge = new Chart($('#c-gauge'), {
+    type:'doughnut',
+    data:{ datasets:[{ data:[pct, 100-pct], backgroundColor:['#3f8a52','#e6efe8'], borderWidth:0, circumference:180, rotation:270 }] },
+    options:{ cutout:'74%', responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{enabled:false} }, animation:{ animateRotate:true, duration:1100 } },
+  });
+  $('#promo-chip').textContent = (p.total + totalReclam + inf.total) + ' interações registradas';
+
+  // Atividade (14 dias)
+  const dias = ultimosDias(14);
+  const mapa = Object.fromEntries((dados.serie || []).map((s) => [s.dia, s]));
+  charts.ativ?.destroy();
+  charts.ativ = new Chart($('#c-atividade'), {
+    type:'bar',
+    data:{ labels: dias.map(formatarDia), datasets:[
+      { label:'Perguntas', data: dias.map((d) => mapa[d]?.perguntas || 0), backgroundColor:'#3f8a52', borderRadius:6, maxBarThickness:18 },
+      { label:'Reclamações', data: dias.map((d) => mapa[d]?.reclamacoes || 0), backgroundColor:'#e0a85e', borderRadius:6, maxBarThickness:18 },
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ usePointStyle:true, font:{ family:'Hanken Grotesk' } } } },
+      scales:{ x:{ grid:{display:false}, ticks:{ font:{ size:10 } } }, y:{ beginAtZero:true, ticks:{ precision:0, stepSize:1 }, grid:{ color:'#eef2ee' } } }, animation:{ duration:1000 } },
+  });
+
+  // Dúvidas (barra horizontal)
+  desenharBarrasH('c-duvidas', 'duvidas-vazio', (m.top_duvidas || []).slice(0,6).map((d) => ({ l:d.texto, n:+d.n })), 'Nenhuma dúvida ainda.');
+  // Reclamações (donut)
+  desenharDonut('c-reclam', 'reclam-vazio', (m.reclamacoes_por_assunto || []).map((d) => ({ l:d.assunto, n:+d.n })), 'Nenhuma reclamação ainda.');
+
+  renderConversas('todas');
+  renderReclamacoes();
+  renderInfracoes();
 }
 
-function barras(sel, itens, msgVazio) {
-  if (!itens.length) { $(sel).innerHTML = `<div class="vazio">${msgVazio}</div>`; return; }
-  const max = Math.max(...itens.map((i) => i.n));
-  $(sel).innerHTML = itens.map((i) =>
-    `<div class="barra-item"><div class="topo-b"><span>${esc(i.rotulo)}</span><span class="qt">${i.n}</span></div>`
-    + `<div class="barra-trilho"><div class="barra-fill" data-w="${Math.round((i.n / max) * 100)}"></div></div></div>`).join('');
-  requestAnimationFrame(() => $(sel).querySelectorAll('.barra-fill').forEach((b) => { b.style.width = b.dataset.w + '%'; }));
+function desenharBarrasH(cid, vid, itens, vazio) {
+  charts[cid]?.destroy();
+  if (!itens.length) { $('#'+cid).style.display='none'; $('#'+vid).innerHTML = `<div class="vazio">${vazio}</div>`; return; }
+  $('#'+cid).style.display=''; $('#'+vid).innerHTML='';
+  charts[cid] = new Chart($('#'+cid), {
+    type:'bar',
+    data:{ labels: itens.map((i) => i.l.length>34 ? i.l.slice(0,33)+'…' : i.l), datasets:[{ data: itens.map((i)=>i.n), backgroundColor:'#6fb98a', borderRadius:6, maxBarThickness:22 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} },
+      scales:{ x:{ beginAtZero:true, ticks:{ precision:0, stepSize:1 }, grid:{ color:'#eef2ee' } }, y:{ grid:{display:false}, ticks:{ font:{ size:11 } } } }, animation:{ duration:1000 } },
+  });
+}
+function desenharDonut(cid, vid, itens, vazio) {
+  charts[cid]?.destroy();
+  if (!itens.length) { $('#'+cid).style.display='none'; $('#'+vid).innerHTML = `<div class="vazio">${vazio}</div>`; return; }
+  $('#'+cid).style.display=''; $('#'+vid).innerHTML='';
+  charts[cid] = new Chart($('#'+cid), {
+    type:'doughnut',
+    data:{ labels: itens.map((i)=>i.l), datasets:[{ data: itens.map((i)=>i.n), backgroundColor: palVerde, borderWidth:2, borderColor:'#fff' }] },
+    options:{ cutout:'62%', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ usePointStyle:true, font:{ family:'Hanken Grotesk', size:11 } } } }, animation:{ animateRotate:true, duration:1000 } },
+  });
 }
 
-async function carregarConversas() {
-  const r = await api('/api/conversas');
-  if (!r.ok) return;
-  const lista = await r.json();
-  if (!lista.length) { $('#conversas').innerHTML = '<div class="vazio">Ainda não há conversas registradas. Assim que os moradores usarem o assistente, elas aparecem aqui.</div>'; return; }
-  $('#conversas').innerHTML = lista.map((c) => {
-    const quando = new Date(c.criado_em).toLocaleString('pt-BR');
-    const tag = c.tipo === 'reclamacao' ? '<span class="tag reclamacao">reclamação</span>' : '<span class="tag pergunta">pergunta</span>';
-    const resp = c.resposta ? `<div class="balao bot">${esc(c.resposta)}</div>` : '';
-    return `<div class="conversa"><div class="quem">👤 ${esc(c.nome || 'Morador')} · ${quando}</div>`
-      + `<div class="balao morador">${tag}<br>${esc(c.texto)}</div>${resp}</div>`;
+function renderConversas(filtro) {
+  const lista = (dados.conv || []).filter((c) => filtro==='todas' ? true : c.tipo===filtro);
+  if (!lista.length) { $('#lista-conversas').innerHTML = '<div class="vazio">Nenhuma conversa registrada ainda.</div>'; return; }
+  $('#lista-conversas').innerHTML = lista.map((c) => {
+    const tag = c.tipo==='reclamacao' ? '<span class="tag reclamacao">reclamação</span>' : '<span class="tag pergunta">pergunta</span>';
+    const resp = c.resposta ? `<div class="balao b">${esc(c.resposta)}</div>` : '';
+    return `<div class="conversa"><div class="quem">👤 ${esc(c.nome||'Morador')} · ${fmtData(c.criado_em)}</div>`
+      + `<div class="balao m">${tag}<br>${esc(c.texto)}</div>${resp}</div>`;
   }).join('');
 }
+$$('#pills-conv .pill').forEach((b) => b.addEventListener('click', () => {
+  $$('#pills-conv .pill').forEach((x) => x.classList.remove('on')); b.classList.add('on'); renderConversas(b.dataset.f);
+}));
 
-function esc(s) { return String(s ?? '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+function renderReclamacoes() {
+  const l = dados.recl || [];
+  if (!l.length) { $('#lista-reclamacoes').innerHTML = '<div class="vazio">Nenhuma reclamação registrada ainda.</div>'; return; }
+  $('#lista-reclamacoes').innerHTML = l.map((r) => `<div class="linha-item"><div class="av">📣</div><div class="corpo">`
+    + `<b>${esc(r.nome||'Morador')}</b><div class="txt">${esc(r.texto)}</div>`
+    + `<div class="meta">${r.assunto ? `<span class="chip-assunto">${esc(r.assunto)}</span>` : ''}<span>${fmtData(r.criado_em)}</span></div></div></div>`).join('');
+}
+function renderInfracoes() {
+  const l = dados.infr || [];
+  if (!l.length) { $('#lista-infracoes').innerHTML = '<div class="vazio">Nenhuma infração registrada ainda.</div>'; return; }
+  $('#lista-infracoes').innerHTML = l.map((i) => `<div class="linha-item"><div class="av">🛡️</div><div class="corpo">`
+    + `<b>${esc(i.nome||'Morador')}</b><div class="txt">${esc(i.texto_original)}</div>`
+    + `<div class="meta"><span class="chip-acao ${i.acao}">${i.acao==='apagado'?'mensagem apagada':'apenas avisado'}</span>`
+    + `<span>confiança ${Math.round((i.confianca||0)*100)}%</span><span>${fmtData(i.criado_em)}</span></div></div></div>`).join('');
+}
 
-if (localStorage.getItem('vp_token')) entrar();
+/* utils datas */
+function ultimosDias(n) { const a=[]; for (let i=n-1;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); a.push(d.toISOString().slice(0,10)); } return a; }
+function formatarDia(iso) { const [,m,d]=iso.split('-'); return d+'/'+m; }
+
+if (tok()) entrar();
 </script>
 </body>
 </html>

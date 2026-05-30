@@ -22,6 +22,20 @@ export async function listarReclamacoes(limite = 100) {
   return rows;
 }
 
+// Série diária dos últimos N dias (para o gráfico de atividade).
+export async function serieDiaria(dias = 14) {
+  const { rows } = await pool.query(
+    `select to_char(date_trunc('day', criado_em), 'YYYY-MM-DD') as dia,
+            count(*) filter (where tipo = 'pergunta')::int as perguntas,
+            count(*) filter (where tipo = 'reclamacao')::int as reclamacoes
+     from mensagens_log
+     where criado_em >= (now() - make_interval(days => $1))
+     group by 1 order by 1`,
+    [dias],
+  );
+  return rows;
+}
+
 export async function listarInfracoes(limite = 100) {
   const { rows } = await pool.query(
     `select id, nome, telefone_usuario, texto_original, tipo, acao, confianca, criado_em

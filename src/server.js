@@ -8,7 +8,7 @@ import { answer } from './ai/answer.js';
 import { sendText, deleteMessage } from './whatsapp/evolution.js';
 import { logMensagem, logReclamacao, logInfracao } from './db/repo.js';
 import { gerarRelatorio } from './db/relatorio.js';
-import { listarConversas, listarReclamacoes, listarInfracoes } from './db/consultas.js';
+import { listarConversas, listarReclamacoes, listarInfracoes, serieDiaria } from './db/consultas.js';
 import { runSchema } from './db/migrate.js';
 import { hasExplicitProfanity } from './moderation/profanity.js';
 import { gerarToken, exigirAuth } from './painel/auth.js';
@@ -51,6 +51,11 @@ app.get('/api/reclamacoes', exigirAuth, async (_req, res) => {
 app.get('/api/infracoes', exigirAuth, async (_req, res) => {
   try { res.json(await listarInfracoes()); }
   catch (e) { console.error('infracoes erro:', e); res.status(500).json({ erro: 'falha ao listar infrações' }); }
+});
+
+app.get('/api/serie', exigirAuth, async (_req, res) => {
+  try { res.json(await serieDiaria(14)); }
+  catch (e) { console.error('serie erro:', e); res.status(500).json({ erro: 'falha ao gerar série' }); }
 });
 
 // Relatório JSON aberto (legado/diagnóstico)
