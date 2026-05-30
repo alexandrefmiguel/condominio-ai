@@ -22,9 +22,10 @@ app.use(express.json({ limit: '2mb' }));
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
 // ---------- Painel (dashboard do síndico) ----------
-const painelHtml = fileURLToPath(new URL('../public/painel.html', import.meta.url));
+const publicDir = fileURLToPath(new URL('../public', import.meta.url));
+app.use(express.static(publicDir, { index: false })); // manifest, ícones, etc.
 app.get('/', (_req, res) => res.redirect('/painel'));
-app.get('/painel', (_req, res) => res.sendFile(painelHtml));
+app.get('/painel', (_req, res) => res.sendFile(`${publicDir}/painel.html`));
 
 app.post('/api/login', (req, res) => {
   const senha = req.body?.senha ?? '';

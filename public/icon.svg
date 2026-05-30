@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3f8a52"/>
+      <stop offset="1" stop-color="#264a32"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- caule -->
+  <path d="M256 392 C256 300 256 250 256 196" fill="none" stroke="#eaf3ec" stroke-width="22" stroke-linecap="round"/>
+  <!-- folha esquerda -->
+  <path d="M256 250 C196 250 150 214 146 156 C210 152 256 192 256 250 Z" fill="#9ad3b0"/>
+  <!-- folha direita -->
+  <path d="M256 210 C316 210 366 170 372 108 C304 104 256 148 256 210 Z" fill="#cfe6d5"/>
+</svg>
