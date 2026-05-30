@@ -162,11 +162,10 @@
   /* ===================== RESPONSIVO ===================== */
   @media (min-width:560px){ .stats{grid-template-columns:repeat(4,1fr)} }
   @media (min-width:980px){
-    #app{grid-template-columns:264px 1fr}
-    .side{position:sticky;height:100svh;transform:none}
+    .side{transform:none}              /* fixa e full-height (top:0/bottom:0), sempre visível */
     .overlay{display:none}
     .hamb{display:none}
-    .conteudo{padding:0 30px 70px}
+    .conteudo{margin-left:264px;padding:0 30px 70px}
     .topbar{margin:0 -30px;padding-left:30px;padding-right:30px}
     .row-3{grid-template-columns:1.1fr 1fr 1fr}
     .row-2{grid-template-columns:1.4fr 1fr}
