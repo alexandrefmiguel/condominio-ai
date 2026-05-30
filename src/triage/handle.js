@@ -31,13 +31,17 @@ export async function handleMessage(msg, deps) {
     return;
   }
 
-  // 2. Reclamação — registra para métricas, não responde no grupo.
+  // 2. Reclamação — registra para métricas E confirma o recebimento no grupo.
   if (c.tipo === 'reclamacao') {
     await deps.logReclamacao({
       telefone: msg.telefone, nome: msg.nome, texto: msg.texto, assunto: c.assunto,
     });
+    await deps.sendText(
+      msg.groupJid,
+      '📝 Sua reclamação foi anotada! Vamos verificar com a equipe e tomar as providências necessárias. Obrigado por avisar.',
+    );
     await deps.logMensagem({
-      telefone: msg.telefone, nome: msg.nome, texto: msg.texto, tipo: 'reclamacao', respondida: false,
+      telefone: msg.telefone, nome: msg.nome, texto: msg.texto, tipo: 'reclamacao', respondida: true,
     });
     return;
   }

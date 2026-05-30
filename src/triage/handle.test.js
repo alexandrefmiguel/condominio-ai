@@ -39,10 +39,12 @@ test('pergunta NÃO dirigida ao bot → não responde, só loga', async () => {
   assert.equal(d.calls.log[0].respondida, false);
 });
 
-test('reclamação → não responde, registra reclamação', async () => {
+test('reclamação → confirma no grupo e registra reclamação', async () => {
   const d = deps({ classify: async () => ({ tipo: 'reclamacao', assunto: 'barulho', confianca: 0.8 }) });
   await handleMessage({ ...base, texto: 'o vizinho faz muito barulho' }, d);
-  assert.equal(d.calls.sent.length, 0);
+  assert.equal(d.calls.sent.length, 1);              // agora confirma o recebimento
+  assert.equal(d.calls.sent[0].to, '123@g.us');
+  assert.match(d.calls.sent[0].t, /anotad/i);
   assert.equal(d.calls.recl.length, 1);
   assert.equal(d.calls.recl[0].assunto, 'barulho');
 });
