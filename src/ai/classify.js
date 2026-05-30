@@ -9,7 +9,7 @@ Responda APENAS um JSON no formato: {"tipo": "...", "assunto": "...", "confianca
 tipo deve ser um destes:
 - "pergunta": dúvida sobre regras, regimento, funcionamento ou áreas do condomínio.
 - "reclamacao": morador reclamando de algo (barulho, vaga, limpeza, pet, vizinho, obra, etc).
-- "ofensa": xingamento, palavrão ou agressão direcionada a alguém.
+- "ofensa": APENAS quando há xingamento explícito ou palavrão agressivo direcionado a uma pessoa (ex: "seu babaca", "vai à merda"). NÃO marque como ofensa: críticas, reclamações, desabafos, ironia, ou palavras de baixo calão usadas sem agredir alguém (ex: "que merda de situação", "o lixo está acumulado"). Na dúvida, NÃO é ofensa.
 - "irrelevante": bate-papo, saudação, figurinha, combinação pessoal, fora de escopo.
 
 assunto: tema em UMA palavra quando for pergunta ou reclamacao (ex: barulho, vaga, pet, lixo, mudanca, obra); senão "".

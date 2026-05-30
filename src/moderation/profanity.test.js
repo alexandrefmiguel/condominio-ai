@@ -6,8 +6,8 @@ test('detecta palavrão explícito', () => {
   assert.equal(hasExplicitProfanity('seu merda'), true);
 });
 
-test('detecta palavrão com acento/variação', () => {
-  assert.equal(hasExplicitProfanity('que desgraça'), true);
+test('detecta xingamento direto', () => {
+  assert.equal(hasExplicitProfanity('seu babaca'), true);
 });
 
 test('texto limpo passa', () => {
@@ -16,4 +16,12 @@ test('texto limpo passa', () => {
 
 test('não casa substring de palavra inocente', () => {
   assert.equal(hasExplicitProfanity('o lixeiro passou cedo'), false);
+});
+
+test('reclamação sobre lixo NÃO é palavrão', () => {
+  assert.equal(hasExplicitProfanity('o lixo não foi recolhido hoje'), false);
+});
+
+test('palavra "desgraça" em desabafo NÃO é palavrão', () => {
+  assert.equal(hasExplicitProfanity('que desgraça de chuva'), false);
 });

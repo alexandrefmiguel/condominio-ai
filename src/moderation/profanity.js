@@ -1,9 +1,11 @@
-// Lista enxuta de palavrões explícitos para atalho barato (evita gastar uma
-// chamada de IA em casos óbvios). Ajuste conforme a realidade do grupo.
+// Lista enxuta APENAS de xingamentos/palavrões inequívocos (atalho barato que
+// evita gastar uma chamada de IA em casos óbvios). NÃO inclui palavras que têm
+// uso legítimo no condomínio (ex: "lixo", "desgraça") para não apagar
+// reclamações ou desabafos por engano. Ajuste conforme a realidade do grupo.
 const WORDS = [
-  'merda', 'porra', 'caralho', 'cacete', 'fdp', 'desgraca', 'arrombado',
-  'idiota', 'imbecil', 'otario', 'babaca', 'corno', 'vagabundo', 'lixo',
-  'viado', 'puta', 'vsf', 'vtnc',
+  'merda', 'porra', 'caralho', 'cacete', 'fdp', 'arrombado', 'desgracado',
+  'otario', 'babaca', 'corno', 'vagabundo', 'viado', 'puta', 'escroto',
+  'cuzao', 'fdputa', 'vsf', 'vtnc', 'vaitomarnocu',
 ];
 
 function normalize(s) {
