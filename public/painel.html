@@ -4,150 +4,198 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Vista Parque · Painel do Síndico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --verde: #1f8a4c;
-    --verde-claro: #e8f5ec;
-    --verde-escuro: #14693a;
-    --verde-suave: #66bb84;
-    --tinta: #1c2b22;
-    --cinza: #6b7c72;
-    --branco: #ffffff;
-    --fundo: #f4faf6;
-    --borda: #dcebe1;
-    --sombra: 0 6px 24px rgba(31, 138, 76, .08);
+    --musgo: #2e5d3b;       /* verde escuro principal */
+    --folha: #3f8a52;       /* verde médio */
+    --broto: #6fb98a;       /* verde claro */
+    --sage: #d7e8da;        /* verde acinzentado */
+    --orvalho: #eef6ef;     /* fundo verde palido */
+    --creme: #fbfaf5;       /* branco quente */
+    --papel: #f5f3ea;       /* off-white papel */
+    --tinta: #1d2a20;       /* texto */
+    --musgo-suave: #5a7361; /* texto secundario */
+    --terra: #c08a3e;       /* acento quente (ocre) */
+    --linha: #e3e0d4;
+    --sombra: 0 10px 40px -12px rgba(46, 93, 59, .25);
+    --sombra-sutil: 0 2px 10px rgba(46, 93, 59, .06);
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Hanken Grotesk", -apple-system, system-ui, sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: var(--fundo); color: var(--tinta); line-height: 1.5;
+    font-family: var(--sans); background: var(--creme); color: var(--tinta);
+    line-height: 1.55; -webkit-font-smoothing: antialiased;
   }
   .hidden { display: none !important; }
 
-  /* ---------- Login ---------- */
-  #login {
-    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
-    background: radial-gradient(1200px 600px at 50% -10%, var(--verde-claro), var(--fundo));
+  /* textura topográfica reutilizável */
+  .topo-bg {
+    background-image:
+      radial-gradient(900px 400px at 85% -20%, rgba(111,185,138,.20), transparent 60%),
+      radial-gradient(700px 500px at -10% 110%, rgba(63,138,82,.14), transparent 55%);
   }
+
+  @keyframes surge { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .reveal { opacity: 0; animation: surge .7s cubic-bezier(.2,.7,.2,1) forwards; }
+
+  /* ---------- LOGIN ---------- */
+  #login { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
   .login-card {
-    background: var(--branco); border: 1px solid var(--borda); border-radius: 20px;
-    padding: 40px 34px; width: 100%; max-width: 380px; box-shadow: var(--sombra); text-align: center;
+    position: relative; background: var(--creme); border: 1px solid var(--linha);
+    border-radius: 26px; padding: 46px 38px 38px; width: 100%; max-width: 400px;
+    box-shadow: var(--sombra); overflow: hidden; text-align: center;
   }
-  .brand { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 22px; }
-  .brand .leaf { font-size: 40px; }
-  .brand h1 { font-size: 22px; color: var(--verde-escuro); letter-spacing: .3px; }
-  .brand small { color: var(--cinza); font-weight: 500; }
+  .login-card::before {
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 90px;
+    background: linear-gradient(135deg, var(--musgo), var(--folha)); opacity: .96;
+  }
+  .crest {
+    position: relative; width: 70px; height: 70px; margin: 0 auto 16px; border-radius: 20px;
+    background: var(--creme); display: grid; place-items: center; font-size: 34px;
+    box-shadow: 0 8px 20px rgba(46,93,59,.25); border: 1px solid var(--linha);
+  }
+  .login-card h1 { font-family: var(--serif); font-weight: 600; font-size: 30px; color: var(--musgo); letter-spacing: -.5px; }
+  .login-card .sub { color: var(--musgo-suave); font-size: 13.5px; font-weight: 500; margin-top: 2px; letter-spacing: .2px; }
+  .login-card form { margin-top: 26px; text-align: left; }
+  label.campo { font-size: 12px; font-weight: 700; color: var(--musgo-suave); text-transform: uppercase; letter-spacing: 1px; }
   input[type=password] {
-    width: 100%; padding: 13px 15px; border: 1.5px solid var(--borda); border-radius: 12px;
-    font-size: 15px; outline: none; transition: border .15s; margin-bottom: 12px;
+    width: 100%; margin-top: 8px; padding: 14px 16px; border: 1.5px solid var(--linha);
+    border-radius: 14px; font-size: 15px; font-family: var(--sans); outline: none;
+    background: var(--papel); transition: border .15s, background .15s;
   }
-  input[type=password]:focus { border-color: var(--verde-suave); }
+  input[type=password]:focus { border-color: var(--broto); background: var(--creme); }
   button.primary {
-    width: 100%; padding: 13px; border: none; border-radius: 12px; background: var(--verde);
-    color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; transition: background .15s;
+    width: 100%; margin-top: 16px; padding: 14px; border: none; border-radius: 14px;
+    background: var(--musgo); color: #fff; font-size: 15px; font-weight: 700; font-family: var(--sans);
+    cursor: pointer; transition: transform .12s, background .15s; letter-spacing: .3px;
   }
-  button.primary:hover { background: var(--verde-escuro); }
-  .erro { color: #c0392b; font-size: 13px; margin-top: 10px; min-height: 16px; }
+  button.primary:hover { background: var(--folha); transform: translateY(-1px); }
+  .erro { color: #b23b2e; font-size: 13px; margin-top: 12px; min-height: 16px; text-align: center; }
 
-  /* ---------- App ---------- */
+  /* ---------- TOPO ---------- */
   header.topo {
-    background: var(--branco); border-bottom: 1px solid var(--borda); padding: 16px 24px;
-    display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 5;
+    position: relative; color: var(--creme); padding: 26px 0 60px;
+    background: linear-gradient(150deg, var(--musgo) 0%, var(--folha) 100%);
+    overflow: hidden;
   }
-  header.topo .id { display: flex; align-items: center; gap: 12px; }
-  header.topo .id .leaf { font-size: 26px; }
-  header.topo .id h1 { font-size: 18px; color: var(--verde-escuro); }
-  header.topo .id span { display: block; font-size: 12px; color: var(--cinza); }
-  header.topo .acoes { display: flex; gap: 10px; }
+  header.topo::after {
+    content: ""; position: absolute; inset: 0; opacity: .5;
+    background-image: radial-gradient(600px 300px at 90% -30%, rgba(255,255,255,.18), transparent 60%);
+  }
+  .topo-inner { position: relative; z-index: 2; max-width: 1080px; margin: 0 auto; padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .topo .marca { display: flex; align-items: center; gap: 14px; }
+  .topo .crest-sm { width: 50px; height: 50px; border-radius: 15px; background: rgba(255,255,255,.14);
+    border: 1px solid rgba(255,255,255,.25); display: grid; place-items: center; font-size: 26px; backdrop-filter: blur(4px); }
+  .topo h1 { font-family: var(--serif); font-weight: 600; font-size: 26px; letter-spacing: -.4px; line-height: 1; }
+  .topo .marca span { font-size: 12.5px; opacity: .85; font-weight: 500; letter-spacing: .3px; }
+  .topo .acoes { display: flex; gap: 10px; }
   .btn {
-    border: 1.5px solid var(--borda); background: var(--branco); color: var(--verde-escuro);
-    padding: 9px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
-  }
-  .btn:hover { background: var(--verde-claro); }
-  .btn.ghost { color: var(--cinza); }
+    border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.12); color: #fff;
+    padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; font-family: var(--sans);
+    cursor: pointer; backdrop-filter: blur(4px); transition: background .15s; }
+  .btn:hover { background: rgba(255,255,255,.22); }
 
-  main { max-width: 1080px; margin: 0 auto; padding: 26px 24px 60px; }
-  .secao-titulo { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--verde-suave); font-weight: 700; margin: 30px 4px 14px; }
+  /* conteúdo sobe sobre o cabeçalho */
+  main { max-width: 1080px; margin: -38px auto 0; padding: 0 24px 70px; position: relative; z-index: 3; }
+  .secao-titulo {
+    font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 20px; color: var(--musgo);
+    margin: 38px 4px 16px; display: flex; align-items: center; gap: 12px; }
+  .secao-titulo::after { content: ""; flex: 1; height: 1px; background: var(--linha); }
+  main > .secao-titulo:first-child { margin-top: 0; }
 
-  /* Cards de número */
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+  /* CARDS */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; }
   .card {
-    background: var(--branco); border: 1px solid var(--borda); border-radius: 18px; padding: 20px;
-    box-shadow: var(--sombra); position: relative; overflow: hidden;
-  }
-  .card .emoji { font-size: 22px; }
-  .card .num { font-size: 38px; font-weight: 800; color: var(--verde-escuro); line-height: 1.1; margin-top: 6px; }
-  .card .rotulo { color: var(--cinza); font-size: 13px; font-weight: 600; margin-top: 2px; }
+    background: var(--creme); border: 1px solid var(--linha); border-radius: 20px; padding: 22px 24px;
+    box-shadow: var(--sombra-sutil); position: relative; overflow: hidden; }
+  .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: linear-gradient(var(--broto), var(--folha)); }
+  .card .emoji { font-size: 20px; opacity: .9; }
+  .card .num { font-family: var(--serif); font-weight: 700; font-size: 46px; color: var(--musgo); line-height: 1; margin-top: 8px; letter-spacing: -1px; }
+  .card .rotulo { color: var(--musgo-suave); font-size: 13px; font-weight: 600; margin-top: 6px; }
 
-  /* Bloco resolução (anel) */
-  .painel-resolucao {
-    display: grid; grid-template-columns: 200px 1fr; gap: 28px; align-items: center;
-    background: var(--branco); border: 1px solid var(--borda); border-radius: 18px; padding: 26px; box-shadow: var(--sombra);
-  }
-  .anel { width: 180px; height: 180px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto; }
-  .anel .miolo {
-    width: 132px; height: 132px; background: var(--branco); border-radius: 50%; display: grid; place-items: center; text-align: center;
-  }
-  .anel .miolo .pct { font-size: 34px; font-weight: 800; color: var(--verde-escuro); }
-  .anel .miolo .leg { font-size: 11px; color: var(--cinza); font-weight: 600; }
-  .legenda { display: flex; flex-direction: column; gap: 12px; }
-  .legenda .item { display: flex; align-items: center; gap: 10px; font-size: 14px; }
-  .dot { width: 12px; height: 12px; border-radius: 4px; }
-  .legenda .item b { color: var(--tinta); }
-  .legenda .item small { color: var(--cinza); }
+  /* RESOLUÇÃO (anel) */
+  .painel-resolucao { display: grid; grid-template-columns: 220px 1fr; gap: 34px; align-items: center;
+    background: var(--creme); border: 1px solid var(--linha); border-radius: 22px; padding: 30px; box-shadow: var(--sombra-sutil); }
+  .anel { width: 190px; height: 190px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto;
+    transition: background 1s cubic-bezier(.2,.7,.2,1); box-shadow: inset 0 0 0 1px rgba(46,93,59,.06); }
+  .anel .miolo { width: 138px; height: 138px; background: var(--creme); border-radius: 50%; display: grid; place-items: center; text-align: center;
+    box-shadow: 0 6px 16px -8px rgba(46,93,59,.4); }
+  .anel .pct { font-family: var(--serif); font-weight: 700; font-size: 42px; color: var(--musgo); letter-spacing: -1px; }
+  .anel .leg { font-size: 11px; color: var(--musgo-suave); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; }
+  .legenda { display: flex; flex-direction: column; gap: 16px; }
+  .legenda .item { display: flex; align-items: flex-start; gap: 12px; font-size: 14.5px; }
+  .dot { width: 13px; height: 13px; border-radius: 5px; margin-top: 4px; flex: none; }
+  .legenda b { font-family: var(--serif); font-weight: 600; }
+  .legenda small { color: var(--musgo-suave); }
 
-  /* Listas com barras */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  .painel-lista { background: var(--branco); border: 1px solid var(--borda); border-radius: 18px; padding: 22px; box-shadow: var(--sombra); }
-  .painel-lista h3 { font-size: 15px; color: var(--verde-escuro); margin-bottom: 16px; }
-  .barra-item { margin-bottom: 14px; }
-  .barra-item .topo-b { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
-  .barra-item .topo-b .qt { color: var(--cinza); font-weight: 700; }
-  .barra-trilho { height: 10px; background: var(--verde-claro); border-radius: 6px; overflow: hidden; }
-  .barra-fill { height: 100%; background: linear-gradient(90deg, var(--verde-suave), var(--verde)); border-radius: 6px; }
-  .vazio { color: var(--cinza); font-size: 13px; font-style: italic; }
+  /* LISTAS / BARRAS */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .painel-lista { background: var(--creme); border: 1px solid var(--linha); border-radius: 22px; padding: 24px; box-shadow: var(--sombra-sutil); }
+  .painel-lista h3 { font-family: var(--serif); font-weight: 600; font-size: 17px; color: var(--musgo); margin-bottom: 18px; }
+  .barra-item { margin-bottom: 15px; }
+  .barra-item:last-child { margin-bottom: 0; }
+  .barra-item .topo-b { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; margin-bottom: 6px; }
+  .barra-item .topo-b span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .barra-item .qt { color: var(--musgo); font-family: var(--serif); font-weight: 700; flex: none; }
+  .barra-trilho { height: 9px; background: var(--orvalho); border-radius: 6px; overflow: hidden; }
+  .barra-fill { height: 100%; background: linear-gradient(90deg, var(--broto), var(--folha)); border-radius: 6px;
+    width: 0; transition: width 1s cubic-bezier(.2,.7,.2,1); }
+  .vazio { color: var(--musgo-suave); font-size: 13.5px; font-style: italic; }
 
-  /* Conversas estilo WhatsApp */
-  .conversas { background: var(--branco); border: 1px solid var(--borda); border-radius: 18px; padding: 22px; box-shadow: var(--sombra); }
-  .conversa { padding: 14px 0; border-bottom: 1px dashed var(--borda); }
-  .conversa:last-child { border-bottom: none; }
-  .conversa .quem { font-size: 12px; color: var(--cinza); margin-bottom: 6px; font-weight: 600; }
-  .balao { max-width: 78%; padding: 10px 14px; border-radius: 14px; font-size: 14px; margin-bottom: 8px; white-space: pre-wrap; }
-  .balao.morador { background: #f0f2f1; border-top-left-radius: 4px; }
-  .balao.bot { background: var(--verde-claro); border: 1px solid #cfe9d8; margin-left: auto; border-top-right-radius: 4px; }
-  .balao .tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-bottom: 5px; }
-  .tag.pergunta { background: #e3f0ff; color: #2563eb; }
-  .tag.reclamacao { background: #fff3e0; color: #c97a14; }
+  /* CONVERSAS */
+  .conversas { background: var(--creme); border: 1px solid var(--linha); border-radius: 22px; padding: 26px; box-shadow: var(--sombra-sutil); }
+  .conversa { padding: 16px 0; border-bottom: 1px dashed var(--linha); }
+  .conversa:first-child { padding-top: 0; }
+  .conversa:last-child { border-bottom: none; padding-bottom: 0; }
+  .conversa .quem { font-size: 12px; color: var(--musgo-suave); margin-bottom: 8px; font-weight: 600; }
+  .balao { max-width: 80%; padding: 11px 15px; border-radius: 16px; font-size: 14px; margin-bottom: 8px; white-space: pre-wrap; }
+  .balao.morador { background: var(--papel); border: 1px solid var(--linha); border-top-left-radius: 5px; }
+  .balao.bot { background: linear-gradient(135deg, var(--orvalho), var(--sage)); border: 1px solid #c8ddcb;
+    margin-left: auto; border-top-right-radius: 5px; color: var(--tinta); }
+  .tag { display: inline-block; font-size: 10px; font-weight: 800; padding: 3px 9px; border-radius: 20px; margin-bottom: 7px; text-transform: uppercase; letter-spacing: .5px; }
+  .tag.pergunta { background: #e0ecff; color: #2d5fb0; }
+  .tag.reclamacao { background: #fdeccf; color: #9a6a16; }
 
-  footer.rodape { text-align: center; color: var(--cinza); font-size: 12px; margin-top: 36px; }
+  footer.rodape { text-align: center; color: var(--musgo-suave); font-size: 12.5px; margin-top: 40px;
+    font-family: var(--serif); font-style: italic; }
+  footer .leaf { font-style: normal; }
 
-  /* ---------- Impressão / PDF ---------- */
+  /* PDF / impressão */
   @media print {
-    header.topo .acoes, .btn { display: none !important; }
+    .btn, .topo .acoes { display: none !important; }
     body { background: #fff; }
+    header.topo { color: var(--musgo); background: #fff; border-bottom: 2px solid var(--folha); padding-bottom: 18px; }
+    header.topo::after { display: none; }
+    .topo .crest-sm { background: var(--orvalho); border-color: var(--linha); }
+    main { margin-top: 16px; }
     .card, .painel-resolucao, .painel-lista, .conversas { box-shadow: none; break-inside: avoid; }
-    header.topo { position: static; }
-    main { padding-top: 8px; }
+    .reveal { opacity: 1 !important; animation: none !important; }
   }
   @media (max-width: 720px) {
     .painel-resolucao { grid-template-columns: 1fr; }
     .grid-2 { grid-template-columns: 1fr; }
+    .topo .acoes { width: 100%; }
   }
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
-<section id="login">
-  <div class="login-card">
-    <div class="brand">
-      <div class="leaf">🌿</div>
-      <h1>Vista Parque</h1>
-      <small>Painel do Síndico · Assistente IA</small>
-    </div>
+<section id="login" class="topo-bg">
+  <div class="login-card reveal">
+    <div class="crest">🌿</div>
+    <h1>Vista Parque</h1>
+    <div class="sub">Painel do Síndico · Assistente Virtual</div>
     <form id="form-login">
-      <input type="password" id="senha" placeholder="Senha do síndico" autocomplete="current-password" />
-      <button class="primary" type="submit">Entrar</button>
+      <label class="campo" for="senha">Senha de acesso</label>
+      <input type="password" id="senha" autocomplete="current-password" placeholder="••••••••" />
+      <button class="primary" type="submit">Entrar no painel</button>
       <div class="erro" id="erro-login"></div>
     </form>
   </div>
@@ -156,41 +204,45 @@
 <!-- APP -->
 <div id="app" class="hidden">
   <header class="topo">
-    <div class="id">
-      <span class="leaf">🌿</span>
-      <div>
-        <h1>Vista Parque</h1>
-        <span>Painel do Assistente Virtual</span>
+    <div class="topo-inner">
+      <div class="marca">
+        <div class="crest-sm">🌿</div>
+        <div>
+          <h1>Vista Parque</h1>
+          <span>Assistente Virtual · visão do síndico</span>
+        </div>
       </div>
-    </div>
-    <div class="acoes">
-      <button class="btn" onclick="window.print()">📄 Exportar PDF</button>
-      <button class="btn ghost" id="sair">Sair</button>
+      <div class="acoes">
+        <button class="btn" onclick="window.print()">Exportar PDF</button>
+        <button class="btn" id="sair">Sair</button>
+      </div>
     </div>
   </header>
 
   <main>
-    <div class="secao-titulo">Visão geral</div>
+    <div class="secao-titulo reveal">Visão geral</div>
     <div class="cards" id="cards"></div>
 
-    <div class="secao-titulo">Resolução pela IA</div>
-    <div class="painel-resolucao">
+    <div class="secao-titulo reveal">Resolução pela IA</div>
+    <div class="painel-resolucao reveal">
       <div class="anel" id="anel">
         <div class="miolo"><div><div class="pct" id="anel-pct">–</div><div class="leg">resolvido</div></div></div>
       </div>
       <div class="legenda" id="legenda"></div>
     </div>
 
-    <div class="secao-titulo">Onde estão as dúvidas e reclamações</div>
+    <div class="secao-titulo reveal">Onde estão as dúvidas e reclamações</div>
     <div class="grid-2">
-      <div class="painel-lista"><h3>🔝 Dúvidas mais frequentes</h3><div id="top-duvidas"></div></div>
-      <div class="painel-lista"><h3>📣 Reclamações por assunto</h3><div id="recl-assunto"></div></div>
+      <div class="painel-lista reveal"><h3>Dúvidas mais frequentes</h3><div id="top-duvidas"></div></div>
+      <div class="painel-lista reveal"><h3>Reclamações por assunto</h3><div id="recl-assunto"></div></div>
     </div>
 
-    <div class="secao-titulo">Conversas recentes</div>
-    <div class="conversas" id="conversas"></div>
+    <div class="secao-titulo reveal">Conversas recentes</div>
+    <div class="conversas reveal" id="conversas"></div>
 
-    <footer class="rodape">Gerado pelo Assistente Virtual do Condomínio Vista Parque · <span id="data-rodape"></span></footer>
+    <footer class="rodape">
+      <span class="leaf">🌿</span> Assistente Virtual do Condomínio Vista Parque · <span id="data-rodape"></span>
+    </footer>
   </main>
 </div>
 
@@ -198,14 +250,17 @@
 const $ = (s) => document.querySelector(s);
 const api = (path) => fetch(path, { headers: { Authorization: 'Bearer ' + (localStorage.getItem('vp_token') || '') } });
 
-// ---------- Login ----------
+// anima a entrada escalonada dos blocos .reveal
+function revelar() {
+  document.querySelectorAll('#app .reveal').forEach((el, i) => { el.style.animationDelay = (i * 70) + 'ms'; });
+}
+
 $('#form-login').addEventListener('submit', async (e) => {
   e.preventDefault();
   $('#erro-login').textContent = '';
-  const senha = $('#senha').value;
   try {
-    const r = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ senha }) });
-    if (!r.ok) { $('#erro-login').textContent = r.status === 401 ? 'Senha incorreta.' : 'Erro ao entrar.'; return; }
+    const r = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ senha: $('#senha').value }) });
+    if (!r.ok) { $('#erro-login').textContent = r.status === 401 ? 'Senha incorreta.' : 'Painel ainda não configurado.'; return; }
     const { token } = await r.json();
     localStorage.setItem('vp_token', token);
     entrar();
@@ -215,20 +270,18 @@ $('#form-login').addEventListener('submit', async (e) => {
 $('#sair').addEventListener('click', () => { localStorage.removeItem('vp_token'); location.reload(); });
 
 async function entrar() {
-  // valida token buscando métricas
   const r = await api('/api/metricas');
   if (!r.ok) { localStorage.removeItem('vp_token'); return; }
   $('#login').classList.add('hidden');
   $('#app').classList.remove('hidden');
   $('#data-rodape').textContent = new Date().toLocaleString('pt-BR');
-  const metricas = await r.json();
-  render(metricas);
+  revelar();
+  render(await r.json());
   carregarConversas();
 }
 
-// ---------- Render ----------
 function card(emoji, num, rotulo) {
-  return `<div class="card"><div class="emoji">${emoji}</div><div class="num">${num}</div><div class="rotulo">${rotulo}</div></div>`;
+  return `<div class="card reveal"><div class="emoji">${emoji}</div><div class="num">${num}</div><div class="rotulo">${rotulo}</div></div>`;
 }
 
 function render(m) {
@@ -239,17 +292,19 @@ function render(m) {
 
   $('#cards').innerHTML =
     card('💬', p.total, 'Perguntas recebidas') +
-    card('✅', pct + '%', 'Resolvidas pela IA') +
+    card('🌱', pct + '%', 'Resolvidas pela IA') +
     card('📣', totalReclam, 'Reclamações') +
     card('🛡️', inf.total, 'Infrações sinalizadas');
+  revelar();
 
-  // Anel (conic-gradient)
   const ang = pct * 3.6;
-  $('#anel').style.background = `conic-gradient(var(--verde) 0 ${ang}deg, var(--verde-claro) ${ang}deg 360deg)`;
+  requestAnimationFrame(() => {
+    $('#anel').style.background = `conic-gradient(var(--folha) 0 ${ang}deg, var(--orvalho) ${ang}deg 360deg)`;
+  });
   $('#anel-pct').textContent = pct + '%';
   $('#legenda').innerHTML =
-    `<div class="item"><span class="dot" style="background:var(--verde)"></span><div><b>${p.respondidas}</b> respondidas pela IA <small>· direto no grupo</small></div></div>` +
-    `<div class="item"><span class="dot" style="background:var(--verde-claro)"></span><div><b>${p.escaladas}</b> encaminhadas <small>· quando não consta no regimento</small></div></div>`;
+    `<div class="item"><span class="dot" style="background:var(--folha)"></span><div><b>${p.respondidas}</b> respondidas pela IA<br><small>direto no grupo, citando o regimento</small></div></div>` +
+    `<div class="item"><span class="dot" style="background:var(--sage)"></span><div><b>${p.escaladas}</b> encaminhadas ao síndico<br><small>quando a dúvida não consta no regimento</small></div></div>`;
 
   barras('#top-duvidas', (m.top_duvidas || []).map((d) => ({ rotulo: d.texto, n: Number(d.n) })), 'Nenhuma dúvida registrada ainda.');
   barras('#recl-assunto', (m.reclamacoes_por_assunto || []).map((d) => ({ rotulo: d.assunto, n: Number(d.n) })), 'Nenhuma reclamação registrada ainda.');
@@ -258,18 +313,17 @@ function render(m) {
 function barras(sel, itens, msgVazio) {
   if (!itens.length) { $(sel).innerHTML = `<div class="vazio">${msgVazio}</div>`; return; }
   const max = Math.max(...itens.map((i) => i.n));
-  $(sel).innerHTML = itens.map((i) => {
-    const w = Math.round((i.n / max) * 100);
-    return `<div class="barra-item"><div class="topo-b"><span>${esc(i.rotulo)}</span><span class="qt">${i.n}</span></div>`
-      + `<div class="barra-trilho"><div class="barra-fill" style="width:${w}%"></div></div></div>`;
-  }).join('');
+  $(sel).innerHTML = itens.map((i) =>
+    `<div class="barra-item"><div class="topo-b"><span>${esc(i.rotulo)}</span><span class="qt">${i.n}</span></div>`
+    + `<div class="barra-trilho"><div class="barra-fill" data-w="${Math.round((i.n / max) * 100)}"></div></div></div>`).join('');
+  requestAnimationFrame(() => $(sel).querySelectorAll('.barra-fill').forEach((b) => { b.style.width = b.dataset.w + '%'; }));
 }
 
 async function carregarConversas() {
   const r = await api('/api/conversas');
   if (!r.ok) return;
   const lista = await r.json();
-  if (!lista.length) { $('#conversas').innerHTML = '<div class="vazio">Ainda não há conversas registradas.</div>'; return; }
+  if (!lista.length) { $('#conversas').innerHTML = '<div class="vazio">Ainda não há conversas registradas. Assim que os moradores usarem o assistente, elas aparecem aqui.</div>'; return; }
   $('#conversas').innerHTML = lista.map((c) => {
     const quando = new Date(c.criado_em).toLocaleString('pt-BR');
     const tag = c.tipo === 'reclamacao' ? '<span class="tag reclamacao">reclamação</span>' : '<span class="tag pergunta">pergunta</span>';
@@ -281,7 +335,6 @@ async function carregarConversas() {
 
 function esc(s) { return String(s ?? '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
 
-// auto-login se já tem token
 if (localStorage.getItem('vp_token')) entrar();
 </script>
 </body>
