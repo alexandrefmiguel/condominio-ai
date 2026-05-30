@@ -7,9 +7,11 @@ import { answer } from './ai/answer.js';
 import { sendText, deleteMessage } from './whatsapp/evolution.js';
 import { logMensagem, logReclamacao, logInfracao } from './db/repo.js';
 import { gerarRelatorio } from './db/relatorio.js';
+import { runSchema } from './db/migrate.js';
 import { hasExplicitProfanity } from './moderation/profanity.js';
 
 assertConfig();
+await runSchema().catch((e) => console.error('falha ao aplicar schema:', e));
 
 const app = express();
 app.use(express.json({ limit: '2mb' }));
