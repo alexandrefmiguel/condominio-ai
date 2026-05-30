@@ -1,4 +1,3 @@
-import { wasBotCalled } from './mention.js';
 import { decideModeration } from '../moderation/decide.js';
 
 /**
@@ -46,8 +45,9 @@ export async function handleMessage(msg, deps) {
     return;
   }
 
-  // 3. Pergunta — só responde se o bot foi chamado (evita spam no grupo).
-  if (c.tipo === 'pergunta' && wasBotCalled(msg.texto, deps.triggers, msg.mentionsBot)) {
+  // 3. Pergunta sobre o condomínio — responde sempre (o classificador já separa
+  //    dúvida do condomínio de conversa irrelevante).
+  if (c.tipo === 'pergunta') {
     const resposta = await deps.answer(msg.texto);
     await deps.sendText(msg.groupJid, resposta);
     await deps.logMensagem({
@@ -56,7 +56,7 @@ export async function handleMessage(msg, deps) {
     return;
   }
 
-  // 4. Irrelevante, ou pergunta não dirigida ao bot — apenas registra.
+  // 4. Irrelevante / conversa fiada — apenas registra.
   await deps.logMensagem({
     telefone: msg.telefone, nome: msg.nome, texto: msg.texto, tipo: c.tipo, respondida: false,
   });

@@ -32,11 +32,11 @@ test('pergunta dirigida ao bot → responde no grupo e loga como respondida', as
   assert.equal(d.calls.log[0].respondida, true);
 });
 
-test('pergunta NÃO dirigida ao bot → não responde, só loga', async () => {
+test('pergunta sem gatilho também é respondida (toda pergunta do condomínio)', async () => {
   const d = deps();
-  await handleMessage({ ...base, texto: 'alguém sabe se pode pet?' }, d);
-  assert.equal(d.calls.sent.length, 0);
-  assert.equal(d.calls.log[0].respondida, false);
+  await handleMessage({ ...base, texto: 'alguém sabe se pode pet?', mentionsBot: false }, d);
+  assert.equal(d.calls.sent.length, 1);
+  assert.equal(d.calls.log[0].respondida, true);
 });
 
 test('reclamação → confirma no grupo e registra reclamação', async () => {
