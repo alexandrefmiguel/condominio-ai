@@ -38,8 +38,11 @@ export function parseWebhook(body, botJid) {
     nome: data.pushName ?? null,
     mentionsBot,
     fromMe: Boolean(key.fromMe),
-    // Para onde responder: o grupo (se for grupo) ou o número do remetente.
-    groupJid: isGroup ? remoteJid : telefone,
+    // Para onde responder: SEMPRE o JID original exato da conversa (grupo, número
+    // ou @lid). Não remontar a partir do número — o WhatsApp usa @lid em alguns
+    // casos e reconstruir como @s.whatsapp.net gera um destino inexistente.
+    groupJid: remoteJid,
+    isGroup,
     key,
   };
 }
