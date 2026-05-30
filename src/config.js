@@ -17,6 +17,11 @@ export const config = {
   botTriggers: (process.env.BOT_TRIGGERS ?? 'zelador,sindico,bot').split(',').map((s) => s.trim()).filter(Boolean),
   // Apaga mensagem ofensiva só acima deste nível de confiança (0..1). Abaixo disso, só avisa.
   moderationDeleteThreshold: Number(process.env.MODERATION_DELETE_THRESHOLD ?? 0.85),
+  // Painel (dashboard) do síndico.
+  painel: {
+    senha: process.env.PAINEL_SENHA ?? '',
+    secret: process.env.PAINEL_SECRET ?? 'vista-parque-secret-troque-isto',
+  },
 };
 
 export function assertConfig() {

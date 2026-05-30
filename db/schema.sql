@@ -8,9 +8,13 @@ create table if not exists mensagens_log (
   texto text not null,
   tipo text not null,            -- pergunta | reclamacao | ofensa | irrelevante
   respondida boolean not null default false,
+  resposta text,                 -- o que o bot respondeu (quando respondeu)
   artigo_citado text,
   criado_em timestamptz not null default now()
 );
+
+-- Para bancos já existentes que não tinham a coluna:
+alter table mensagens_log add column if not exists resposta text;
 
 create table if not exists reclamacoes (
   id bigserial primary key,

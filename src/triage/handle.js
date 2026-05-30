@@ -32,15 +32,13 @@ export async function handleMessage(msg, deps) {
 
   // 2. Reclamação — registra para métricas E confirma o recebimento no grupo.
   if (c.tipo === 'reclamacao') {
+    const confirmacao = '📝 Sua reclamação foi anotada! Vamos verificar com a equipe e tomar as providências necessárias. Obrigado por avisar.';
     await deps.logReclamacao({
       telefone: msg.telefone, nome: msg.nome, texto: msg.texto, assunto: c.assunto,
     });
-    await deps.sendText(
-      msg.groupJid,
-      '📝 Sua reclamação foi anotada! Vamos verificar com a equipe e tomar as providências necessárias. Obrigado por avisar.',
-    );
+    await deps.sendText(msg.groupJid, confirmacao);
     await deps.logMensagem({
-      telefone: msg.telefone, nome: msg.nome, texto: msg.texto, tipo: 'reclamacao', respondida: true,
+      telefone: msg.telefone, nome: msg.nome, texto: msg.texto, tipo: 'reclamacao', respondida: true, resposta: confirmacao,
     });
     return;
   }
@@ -51,7 +49,7 @@ export async function handleMessage(msg, deps) {
     const resposta = await deps.answer(msg.texto);
     await deps.sendText(msg.groupJid, resposta);
     await deps.logMensagem({
-      telefone: msg.telefone, nome: msg.nome, texto: msg.texto, tipo: 'pergunta', respondida: true,
+      telefone: msg.telefone, nome: msg.nome, texto: msg.texto, tipo: 'pergunta', respondida: true, resposta,
     });
     return;
   }

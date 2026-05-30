@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vista Parque · Painel do Síndico</title>
+<style>
+  :root {
+    --verde: #1f8a4c;
+    --verde-claro: #e8f5ec;
+    --verde-escuro: #14693a;
+    --verde-suave: #66bb84;
+    --tinta: #1c2b22;
+    --cinza: #6b7c72;
+    --branco: #ffffff;
+    --fundo: #f4faf6;
+    --borda: #dcebe1;
+    --sombra: 0 6px 24px rgba(31, 138, 76, .08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--fundo); color: var(--tinta); line-height: 1.5;
+  }
+  .hidden { display: none !important; }
+
+  /* ---------- Login ---------- */
+  #login {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+    background: radial-gradient(1200px 600px at 50% -10%, var(--verde-claro), var(--fundo));
+  }
+  .login-card {
+    background: var(--branco); border: 1px solid var(--borda); border-radius: 20px;
+    padding: 40px 34px; width: 100%; max-width: 380px; box-shadow: var(--sombra); text-align: center;
+  }
+  .brand { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 22px; }
+  .brand .leaf { font-size: 40px; }
+  .brand h1 { font-size: 22px; color: var(--verde-escuro); letter-spacing: .3px; }
+  .brand small { color: var(--cinza); font-weight: 500; }
+  input[type=password] {
+    width: 100%; padding: 13px 15px; border: 1.5px solid var(--borda); border-radius: 12px;
+    font-size: 15px; outline: none; transition: border .15s; margin-bottom: 12px;
+  }
+  input[type=password]:focus { border-color: var(--verde-suave); }
+  button.primary {
+    width: 100%; padding: 13px; border: none; border-radius: 12px; background: var(--verde);
+    color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; transition: background .15s;
+  }
+  button.primary:hover { background: var(--verde-escuro); }
+  .erro { color: #c0392b; font-size: 13px; margin-top: 10px; min-height: 16px; }
+
+  /* ---------- App ---------- */
+  header.topo {
+    background: var(--branco); border-bottom: 1px solid var(--borda); padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 5;
+  }
+  header.topo .id { display: flex; align-items: center; gap: 12px; }
+  header.topo .id .leaf { font-size: 26px; }
+  header.topo .id h1 { font-size: 18px; color: var(--verde-escuro); }
+  header.topo .id span { display: block; font-size: 12px; color: var(--cinza); }
+  header.topo .acoes { display: flex; gap: 10px; }
+  .btn {
+    border: 1.5px solid var(--borda); background: var(--branco); color: var(--verde-escuro);
+    padding: 9px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .btn:hover { background: var(--verde-claro); }
+  .btn.ghost { color: var(--cinza); }
+
+  main { max-width: 1080px; margin: 0 auto; padding: 26px 24px 60px; }
+  .secao-titulo { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--verde-suave); font-weight: 700; margin: 30px 4px 14px; }
+
+  /* Cards de número */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--branco); border: 1px solid var(--borda); border-radius: 18px; padding: 20px;
+    box-shadow: var(--sombra); position: relative; overflow: hidden;
+  }
+  .card .emoji { font-size: 22px; }
+  .card .num { font-size: 38px; font-weight: 800; color: var(--verde-escuro); line-height: 1.1; margin-top: 6px; }
+  .card .rotulo { color: var(--cinza); font-size: 13px; font-weight: 600; margin-top: 2px; }
+
+  /* Bloco resolução (anel) */
+  .painel-resolucao {
+    display: grid; grid-template-columns: 200px 1fr; gap: 28px; align-items: center;
+    background: var(--branco); border: 1px solid var(--borda); border-radius: 18px; padding: 26px; box-shadow: var(--sombra);
+  }
+  .anel { width: 180px; height: 180px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto; }
+  .anel .miolo {
+    width: 132px; height: 132px; background: var(--branco); border-radius: 50%; display: grid; place-items: center; text-align: center;
+  }
+  .anel .miolo .pct { font-size: 34px; font-weight: 800; color: var(--verde-escuro); }
+  .anel .miolo .leg { font-size: 11px; color: var(--cinza); font-weight: 600; }
+  .legenda { display: flex; flex-direction: column; gap: 12px; }
+  .legenda .item { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+  .dot { width: 12px; height: 12px; border-radius: 4px; }
+  .legenda .item b { color: var(--tinta); }
+  .legenda .item small { color: var(--cinza); }
+
+  /* Listas com barras */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .painel-lista { background: var(--branco); border: 1px solid var(--borda); border-radius: 18px; padding: 22px; box-shadow: var(--sombra); }
+  .painel-lista h3 { font-size: 15px; color: var(--verde-escuro); margin-bottom: 16px; }
+  .barra-item { margin-bottom: 14px; }
+  .barra-item .topo-b { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
+  .barra-item .topo-b .qt { color: var(--cinza); font-weight: 700; }
+  .barra-trilho { height: 10px; background: var(--verde-claro); border-radius: 6px; overflow: hidden; }
+  .barra-fill { height: 100%; background: linear-gradient(90deg, var(--verde-suave), var(--verde)); border-radius: 6px; }
+  .vazio { color: var(--cinza); font-size: 13px; font-style: italic; }
+
+  /* Conversas estilo WhatsApp */
+  .conversas { background: var(--branco); border: 1px solid var(--borda); border-radius: 18px; padding: 22px; box-shadow: var(--sombra); }
+  .conversa { padding: 14px 0; border-bottom: 1px dashed var(--borda); }
+  .conversa:last-child { border-bottom: none; }
+  .conversa .quem { font-size: 12px; color: var(--cinza); margin-bottom: 6px; font-weight: 600; }
+  .balao { max-width: 78%; padding: 10px 14px; border-radius: 14px; font-size: 14px; margin-bottom: 8px; white-space: pre-wrap; }
+  .balao.morador { background: #f0f2f1; border-top-left-radius: 4px; }
+  .balao.bot { background: var(--verde-claro); border: 1px solid #cfe9d8; margin-left: auto; border-top-right-radius: 4px; }
+  .balao .tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-bottom: 5px; }
+  .tag.pergunta { background: #e3f0ff; color: #2563eb; }
+  .tag.reclamacao { background: #fff3e0; color: #c97a14; }
+
+  footer.rodape { text-align: center; color: var(--cinza); font-size: 12px; margin-top: 36px; }
+
+  /* ---------- Impressão / PDF ---------- */
+  @media print {
+    header.topo .acoes, .btn { display: none !important; }
+    body { background: #fff; }
+    .card, .painel-resolucao, .painel-lista, .conversas { box-shadow: none; break-inside: avoid; }
+    header.topo { position: static; }
+    main { padding-top: 8px; }
+  }
+  @media (max-width: 720px) {
+    .painel-resolucao { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<section id="login">
+  <div class="login-card">
+    <div class="brand">
+      <div class="leaf">🌿</div>
+      <h1>Vista Parque</h1>
+      <small>Painel do Síndico · Assistente IA</small>
+    </div>
+    <form id="form-login">
+      <input type="password" id="senha" placeholder="Senha do síndico" autocomplete="current-password" />
+      <button class="primary" type="submit">Entrar</button>
+      <div class="erro" id="erro-login"></div>
+    </form>
+  </div>
+</section>
+
+<!-- APP -->
+<div id="app" class="hidden">
+  <header class="topo">
+    <div class="id">
+      <span class="leaf">🌿</span>
+      <div>
+        <h1>Vista Parque</h1>
+        <span>Painel do Assistente Virtual</span>
+      </div>
+    </div>
+    <div class="acoes">
+      <button class="btn" onclick="window.print()">📄 Exportar PDF</button>
+      <button class="btn ghost" id="sair">Sair</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="secao-titulo">Visão geral</div>
+    <div class="cards" id="cards"></div>
+
+    <div class="secao-titulo">Resolução pela IA</div>
+    <div class="painel-resolucao">
+      <div class="anel" id="anel">
+        <div class="miolo"><div><div class="pct" id="anel-pct">–</div><div class="leg">resolvido</div></div></div>
+      </div>
+      <div class="legenda" id="legenda"></div>
+    </div>
+
+    <div class="secao-titulo">Onde estão as dúvidas e reclamações</div>
+    <div class="grid-2">
+      <div class="painel-lista"><h3>🔝 Dúvidas mais frequentes</h3><div id="top-duvidas"></div></div>
+      <div class="painel-lista"><h3>📣 Reclamações por assunto</h3><div id="recl-assunto"></div></div>
+    </div>
+
+    <div class="secao-titulo">Conversas recentes</div>
+    <div class="conversas" id="conversas"></div>
+
+    <footer class="rodape">Gerado pelo Assistente Virtual do Condomínio Vista Parque · <span id="data-rodape"></span></footer>
+  </main>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const api = (path) => fetch(path, { headers: { Authorization: 'Bearer ' + (localStorage.getItem('vp_token') || '') } });
+
+// ---------- Login ----------
+$('#form-login').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  $('#erro-login').textContent = '';
+  const senha = $('#senha').value;
+  try {
+    const r = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ senha }) });
+    if (!r.ok) { $('#erro-login').textContent = r.status === 401 ? 'Senha incorreta.' : 'Erro ao entrar.'; return; }
+    const { token } = await r.json();
+    localStorage.setItem('vp_token', token);
+    entrar();
+  } catch { $('#erro-login').textContent = 'Falha de conexão.'; }
+});
+
+$('#sair').addEventListener('click', () => { localStorage.removeItem('vp_token'); location.reload(); });
+
+async function entrar() {
+  // valida token buscando métricas
+  const r = await api('/api/metricas');
+  if (!r.ok) { localStorage.removeItem('vp_token'); return; }
+  $('#login').classList.add('hidden');
+  $('#app').classList.remove('hidden');
+  $('#data-rodape').textContent = new Date().toLocaleString('pt-BR');
+  const metricas = await r.json();
+  render(metricas);
+  carregarConversas();
+}
+
+// ---------- Render ----------
+function card(emoji, num, rotulo) {
+  return `<div class="card"><div class="emoji">${emoji}</div><div class="num">${num}</div><div class="rotulo">${rotulo}</div></div>`;
+}
+
+function render(m) {
+  const p = m.perguntas || { total: 0, respondidas: 0, escaladas: 0 };
+  const inf = m.infracoes || { total: 0, apagadas: 0 };
+  const totalReclam = (m.reclamacoes_por_assunto || []).reduce((s, r) => s + Number(r.n), 0);
+  const pct = p.total ? Math.round((p.respondidas / p.total) * 100) : 0;
+
+  $('#cards').innerHTML =
+    card('💬', p.total, 'Perguntas recebidas') +
+    card('✅', pct + '%', 'Resolvidas pela IA') +
+    card('📣', totalReclam, 'Reclamações') +
+    card('🛡️', inf.total, 'Infrações sinalizadas');
+
+  // Anel (conic-gradient)
+  const ang = pct * 3.6;
+  $('#anel').style.background = `conic-gradient(var(--verde) 0 ${ang}deg, var(--verde-claro) ${ang}deg 360deg)`;
+  $('#anel-pct').textContent = pct + '%';
+  $('#legenda').innerHTML =
+    `<div class="item"><span class="dot" style="background:var(--verde)"></span><div><b>${p.respondidas}</b> respondidas pela IA <small>· direto no grupo</small></div></div>` +
+    `<div class="item"><span class="dot" style="background:var(--verde-claro)"></span><div><b>${p.escaladas}</b> encaminhadas <small>· quando não consta no regimento</small></div></div>`;
+
+  barras('#top-duvidas', (m.top_duvidas || []).map((d) => ({ rotulo: d.texto, n: Number(d.n) })), 'Nenhuma dúvida registrada ainda.');
+  barras('#recl-assunto', (m.reclamacoes_por_assunto || []).map((d) => ({ rotulo: d.assunto, n: Number(d.n) })), 'Nenhuma reclamação registrada ainda.');
+}
+
+function barras(sel, itens, msgVazio) {
+  if (!itens.length) { $(sel).innerHTML = `<div class="vazio">${msgVazio}</div>`; return; }
+  const max = Math.max(...itens.map((i) => i.n));
+  $(sel).innerHTML = itens.map((i) => {
+    const w = Math.round((i.n / max) * 100);
+    return `<div class="barra-item"><div class="topo-b"><span>${esc(i.rotulo)}</span><span class="qt">${i.n}</span></div>`
+      + `<div class="barra-trilho"><div class="barra-fill" style="width:${w}%"></div></div></div>`;
+  }).join('');
+}
+
+async function carregarConversas() {
+  const r = await api('/api/conversas');
+  if (!r.ok) return;
+  const lista = await r.json();
+  if (!lista.length) { $('#conversas').innerHTML = '<div class="vazio">Ainda não há conversas registradas.</div>'; return; }
+  $('#conversas').innerHTML = lista.map((c) => {
+    const quando = new Date(c.criado_em).toLocaleString('pt-BR');
+    const tag = c.tipo === 'reclamacao' ? '<span class="tag reclamacao">reclamação</span>' : '<span class="tag pergunta">pergunta</span>';
+    const resp = c.resposta ? `<div class="balao bot">${esc(c.resposta)}</div>` : '';
+    return `<div class="conversa"><div class="quem">👤 ${esc(c.nome || 'Morador')} · ${quando}</div>`
+      + `<div class="balao morador">${tag}<br>${esc(c.texto)}</div>${resp}</div>`;
+  }).join('');
+}
+
+function esc(s) { return String(s ?? '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+
+// auto-login se já tem token
+if (localStorage.getItem('vp_token')) entrar();
+</script>
+</body>
+</html>

@@ -2,9 +2,9 @@ import { pool } from './pool.js';
 
 export const logMensagem = (m) =>
   pool.query(
-    `insert into mensagens_log (telefone_usuario, nome, texto, tipo, respondida, artigo_citado)
-     values ($1,$2,$3,$4,$5,$6)`,
-    [m.telefone, m.nome ?? null, m.texto, m.tipo, m.respondida ?? false, m.artigo ?? null],
+    `insert into mensagens_log (telefone_usuario, nome, texto, tipo, respondida, resposta, artigo_citado)
+     values ($1,$2,$3,$4,$5,$6,$7)`,
+    [m.telefone, m.nome ?? null, m.texto, m.tipo, m.respondida ?? false, m.resposta ?? null, m.artigo ?? null],
   );
 
 export const logReclamacao = (r) =>
