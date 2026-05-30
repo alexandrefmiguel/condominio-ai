@@ -30,6 +30,14 @@ app.get('/relatorio', async (_req, res) => {
 app.post('/webhook', async (req, res) => {
   res.sendStatus(200); // responde rápido ao Evolution; processa em background
   try {
+    // DEBUG TEMPORÁRIO: inspecionar o formato do payload (remover depois)
+    console.log('WEBHOOK KEY:', JSON.stringify(req.body?.data?.key));
+    console.log('WEBHOOK META:', JSON.stringify({
+      messageType: req.body?.data?.messageType,
+      pushName: req.body?.data?.pushName,
+      source: req.body?.data?.source,
+    }));
+
     const msg = parseWebhook(req.body, config.evolution.botJid);
     if (!msg || !msg.texto || msg.fromMe) return;
 
